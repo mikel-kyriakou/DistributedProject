@@ -3,13 +3,16 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Master extends Thread{
-    //private final int number_of_workers = 3;
+    private static final int number_of_workers = 3;
+    private static Worker[] arrayOfWorkers = new Worker[number_of_workers];
     private static ArrayList<ArrayList<Waypoint>> master_list = new ArrayList<ArrayList<Waypoint>>();
     
     public static void main(String args[]) {
         new Master().openServerForUser();
 
-        //Worker w1 = new Worker();
+        for(int i=0; i<number_of_workers; i++){
+            arrayOfWorkers[i] = new Worker();
+        }
     }
 
     /* Define the socket that receives requests */
