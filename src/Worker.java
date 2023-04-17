@@ -3,7 +3,10 @@ import java.net.*;
 
 
 public class Worker extends Thread{
-    public Worker(){}
+    private int id;
+    public Worker(int id){
+        this.id = id;
+    }
 
     public void run() {
         ObjectOutputStream out= null ;
@@ -19,10 +22,6 @@ public class Worker extends Thread{
             /* Create the streams to send and receive data from server */
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
-
-
-
-            /* Print the received result from server */
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");

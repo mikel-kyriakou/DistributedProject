@@ -11,7 +11,7 @@ public class Master extends Thread{
         new Master().openServerForUser();
 
         for(int i=0; i<number_of_workers; i++){
-            arrayOfWorkers[i] = new Worker();
+            arrayOfWorkers[i] = new Worker(i);
         }
     }
 
@@ -78,5 +78,23 @@ public class Master extends Thread{
         }
     }
 
+    
+    void roundRobinWorkers(){
+        int workerId=0;
+
+        while(true){
+            if(master_list.size()>0){
+                if(master_list.get(0).size() > 1){
+                    Thread thread = new ActionsForWorkers(providerSocketWorker, workerId, master_list.get(0).get(0), master_list.get(0).get(1));
+                    thread.start();
+                    workerId = (workerId+1)%number_of_workers;
+                    master_list.get(0).remove(0);
+                }
+                else{
+                    master_list.remove(0);
+                }
+            }
+        }
+    }
     
 }
