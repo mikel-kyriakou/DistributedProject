@@ -17,7 +17,6 @@ public class ActionsForUsers extends Thread{
     ObjectInputStream in;
     ObjectOutputStream out;
     private ArrayList<Waypoint> wpt_list = new ArrayList<Waypoint>();
-    // private ArrayList<ArrayList<Waypoint>> list = new ArrayList<ArrayList<Waypoint>>();
     private ArrayList<ArrayList<ChunkedGPX>> list = new ArrayList<ArrayList<ChunkedGPX>>();
     private int index;
 
@@ -44,23 +43,6 @@ public class ActionsForUsers extends Thread{
         this.list = list;
         this.index = index;
     }
-
-
-    // public ActionsForUsers(Socket connection, ArrayList<ArrayList<Waypoint>> list) {
-    //     try {
-    //         this.list = list;
-    //         out = new ObjectOutputStream(connection.getOutputStream());
-    //         in = new ObjectInputStream(connection.getInputStream());
-
-
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
-    // public synchronized void addListToMaster(){
-    //     list.add(wpt_list);
-    // }
 
     public synchronized void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int index){
         Waypoint wpt1, wpt2;

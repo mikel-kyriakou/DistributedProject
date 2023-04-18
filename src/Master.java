@@ -2,17 +2,19 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Master extends Thread{
+public class Master{
     private static final int number_of_workers = 3;
-    private static Worker[] arrayOfWorkers = new Worker[number_of_workers];
+    private static Worker2[] arrayOfWorkers = new Worker2[number_of_workers];
     // private static ArrayList<ArrayList<Waypoint>> master_list = new ArrayList<ArrayList<Waypoint>>();
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int workerIndex = 0;
 
     
     public static void main(String args[]) {
+        new Master().openServerForWorkers();
+
         for(int i=0; i<number_of_workers; i++){
-            arrayOfWorkers[i] = new Worker(i);
+            arrayOfWorkers[i] = new Worker2(i);
             ArrayList<ChunkedGPX> row = new ArrayList<ChunkedGPX>();
             workerList.add(row);
         }
@@ -57,48 +59,33 @@ public class Master extends Thread{
         }
     }
 
-    // void openServerForWorkers() {
-    //     try {
-    //         /* Create Server Socket */
-    //         sWorker = new ServerSocket(4322, 10);
+    void openServerForWorkers() {
+        try {
+            int i = 0;
+
+            /* Create Server Socket */
+            sWorker = new ServerSocket(4322, 10);
 
 
-    //         while (true) {
-    //             /* Accept the connection */
-    //             providerSocketWorker = sWorker.accept();
+            while (true) {
+                /* Accept the connection */
+                providerSocketWorker = sWorker.accept();
 
-    //             /* Handle the request */
-    //             Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList);
-    //             dWorker.start();
-    //         }
+                /* Handle the request */
+                Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList.get(i));
+                dWorker.start();
+                i++;
+            }
 
-    //     } catch (IOException ioException) {
-    //         ioException.printStackTrace();
-    //     } finally {
-    //         try {
-    //             providerSocketWorker.close();
-    //         } catch (IOException ioException) {
-    //             ioException.printStackTrace();
-    //         }
-    //     }
-    // }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        } finally {
+            try {
+                providerSocketWorker.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    }
 
-    
-    // void roundRobinWorkers(){
-    //     int workerId=0;
-
-    //     while(true){
-    //         if(master_list.size()>0){
-    //             if(master_list.get(0).size() > 1){
-
-    //                 workerId = (workerId+1)%number_of_workers;
-    //                 master_list.get(0).remove(0);
-    //             }
-    //             else{
-    //                 master_list.remove(0);
-    //             }
-    //         }
-    //     }
-    // }
-    
 }
