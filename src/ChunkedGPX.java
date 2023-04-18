@@ -1,25 +1,14 @@
 import java.io.Serializable;
 
 public class ChunkedGPX implements Serializable{
-    private int id;
     private Waypoint wpt1, wpt2;
-
 
     public ChunkedGPX() {
     }
 
-    public ChunkedGPX(int id, Waypoint wpt1, Waypoint wpt2) {
-        this.id = id;
+    public ChunkedGPX(Waypoint wpt1, Waypoint wpt2) {
         this.wpt1 = wpt1;
         this.wpt2 = wpt2;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Waypoint getWpt1() {
@@ -41,7 +30,6 @@ public class ChunkedGPX implements Serializable{
     @Override
     public String toString() {
         return "{" +
-            " id='" + getId() + "'" +
             ", wpt1='" + getWpt1() + "'" +
             ", wpt2='" + getWpt2() + "'" +
             "}";

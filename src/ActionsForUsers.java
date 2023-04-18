@@ -17,7 +17,10 @@ public class ActionsForUsers extends Thread{
     ObjectInputStream in;
     ObjectOutputStream out;
     private ArrayList<Waypoint> wpt_list = new ArrayList<Waypoint>();
-    private ArrayList<ArrayList<Waypoint>> list = new ArrayList<ArrayList<Waypoint>>();
+    // private ArrayList<ArrayList<Waypoint>> list = new ArrayList<ArrayList<Waypoint>>();
+    private ArrayList<ArrayList<ChunkedGPX>> list = new ArrayList<ArrayList<ChunkedGPX>>();
+    private int index;
+
 
     public ActionsForUsers(Socket connection) {
         try {
@@ -29,20 +32,48 @@ public class ActionsForUsers extends Thread{
         }
     }
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<Waypoint>> list) {
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int index) {
         try {
-            this.list = list;
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        this.list = list;
+        this.index = index;
     }
 
-    public synchronized void addListToMaster(){
-        list.add(wpt_list);
+
+    // public ActionsForUsers(Socket connection, ArrayList<ArrayList<Waypoint>> list) {
+    //     try {
+    //         this.list = list;
+    //         out = new ObjectOutputStream(connection.getOutputStream());
+    //         in = new ObjectInputStream(connection.getInputStream());
+
+
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+
+    // public synchronized void addListToMaster(){
+    //     list.add(wpt_list);
+    // }
+
+    public synchronized void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int index){
+        Waypoint wpt1, wpt2;
+        ChunkedGPX wpts;
+
+        while(wpt_list.size()>1){
+            wpt1 = wpt_list.get(0);
+            wpt2 = wpt_list.get(1);
+            wpts = new ChunkedGPX(wpt1, wpt2);
+            list.get(index).add(wpts);
+            index = (index+1)%(list.size());
+            wpt_list.remove(0);
+        }
     }
 
     public void getgpxfile(File f){ //synchronize
@@ -92,7 +123,9 @@ public class ActionsForUsers extends Thread{
 
             getgpxfile(f);
 
-            addListToMaster();
+            roundRobin(wpt_list, list, index);
+
+            // System.out.println(list.get(1).size());
 
             out.writeObject(wpt_list.get(0));
             out.flush();
