@@ -9,15 +9,13 @@ public class Worker2 {
 
     public Worker2(int id){
         this.id = id;
-        // new ConnectionWithMaster().start();
-        // establishConnection();
     }
 
     public void establishConnection() {
         try {
 
             /* Create socket for contacting the server on port 4321*/
-            requestSocket = new Socket("localhost", 4322); //kalitera na oriso se allo arxio to host kai to port kai na to paro apo ekei para na to diloso edo
+            requestSocket = new Socket("localhost", 5432); //kalitera na oriso se allo arxio to host kai to port kai na to paro apo ekei para na to diloso edo
 
             /* Create the streams to send and receive data from server */
             out = new ObjectOutputStream(requestSocket.getOutputStream());

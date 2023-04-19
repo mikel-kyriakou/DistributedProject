@@ -11,7 +11,7 @@ public class Master{
 
     
     public static void main(String args[]) {
-        // new Master().openServerForWorkers();
+        Master myMaster = new Master();
 
         for(int i=0; i<number_of_workers; i++){
             arrayOfWorkers[i] = new Worker2(i);
@@ -19,8 +19,12 @@ public class Master{
             workerList.add(row);
         }
 
-        new Master().openServerForUser();
+        myMaster.openServerForUser();
+        myMaster.openServerForWorkers();
 
+        for(int i=0; i<number_of_workers; i++){
+            arrayOfWorkers[i].establishConnection();
+        }
     }
 
     /* Define the socket that receives requests */
@@ -64,7 +68,7 @@ public class Master{
             int i = 0;
 
             /* Create Server Socket */
-            sWorker = new ServerSocket(4322, 10);
+            sWorker = new ServerSocket(5432, 10);
 
 
             while (true) {
@@ -72,6 +76,7 @@ public class Master{
                 providerSocketWorker = sWorker.accept();
 
                 /* Handle the request */
+                Thread sender = new SendToWorker(providerSocketWorker, workerList.get(i));
                 Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList.get(i));
                 dWorker.start();
                 i++;
