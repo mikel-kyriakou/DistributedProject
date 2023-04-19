@@ -11,7 +11,7 @@ public class Master{
 
     
     public static void main(String args[]) {
-        new Master().openServerForWorkers();
+        // new Master().openServerForWorkers();
 
         for(int i=0; i<number_of_workers; i++){
             arrayOfWorkers[i] = new Worker2(i);

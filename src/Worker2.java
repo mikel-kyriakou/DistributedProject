@@ -9,8 +9,8 @@ public class Worker2 {
 
     public Worker2(int id){
         this.id = id;
-        new ConnectionWithMaster().start();
-        establishConnection();
+        // new ConnectionWithMaster().start();
+        // establishConnection();
     }
 
     public void establishConnection() {
