@@ -17,8 +17,9 @@ public class ActionsForUsers extends Thread{
     ObjectInputStream in;
     ObjectOutputStream out;
     private ArrayList<Waypoint> wpt_list = new ArrayList<Waypoint>();
-    private ArrayList<ArrayList<ChunkedGPX>> list = new ArrayList<ArrayList<ChunkedGPX>>();
-    private int index;
+    private ArrayList<ArrayList<ChunkedGPX>> list;
+    private int[] index;
+    private Object lock;
 
 
     public ActionsForUsers(Socket connection) {
@@ -31,7 +32,7 @@ public class ActionsForUsers extends Thread{
         }
     }
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int index) {
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object lock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -42,9 +43,10 @@ public class ActionsForUsers extends Thread{
 
         this.list = list;
         this.index = index;
+        this.lock = lock;
     }
 
-    public synchronized void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int index){
+    public void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object lock){
         Waypoint wpt1, wpt2;
         ChunkedGPX wpts;
 
@@ -52,8 +54,10 @@ public class ActionsForUsers extends Thread{
             wpt1 = wpt_list.get(0);
             wpt2 = wpt_list.get(1);
             wpts = new ChunkedGPX(wpt1, wpt2);
-            list.get(index).add(wpts);
-            index = (index+1)%(list.size());
+            synchronized(lock){
+                list.get(index[0]).add(wpts);
+                index[0] = (index[0]+1)%(list.size());
+            }
             wpt_list.remove(0);
         }
     }
@@ -105,7 +109,7 @@ public class ActionsForUsers extends Thread{
 
             getgpxfile(f);
 
-            roundRobin(wpt_list, list, index);
+            roundRobin(wpt_list, list, index, lock);
 
             // System.out.println(list.get(1).size());
 

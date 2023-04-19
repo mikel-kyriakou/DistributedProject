@@ -6,9 +6,10 @@ public class SendToWorker extends Thread {
     // ObjectInputStream in;
     ObjectOutputStream out;
     private ArrayList<ChunkedGPX> worker_list;
+    private Object lock;
 
 
-    public SendToWorker(Socket connection, ArrayList<ChunkedGPX> list){
+    public SendToWorker(Socket connection, ArrayList<ChunkedGPX> list, Object lock){
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             // in = new ObjectInputStream(connection.getInputStream());
@@ -18,11 +19,12 @@ public class SendToWorker extends Thread {
         }
 
         this.worker_list = list;
+        this.lock = lock;
     }
 
     public void run(){
         try {  
-            synchronized(worker_list){
+            synchronized(lock){
                 while(worker_list.size()>0){
                     out.writeObject(worker_list.get(0));
                     out.flush();
