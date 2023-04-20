@@ -1,15 +1,12 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 
-public class SendToWorker extends Thread {
+public class SendToMaster extends Thread {
     // ObjectInputStream in;
     ObjectOutputStream out;
-    private ArrayList<ChunkedGPX> worker_list;
-    private Object lock;
 
 
-    public SendToWorker(Socket connection, ArrayList<ChunkedGPX> list, Object lock){
+    public SendToMaster(Socket connection){
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             // in = new ObjectInputStream(connection.getInputStream());
@@ -18,20 +15,13 @@ public class SendToWorker extends Thread {
             e.printStackTrace();
         }
 
-        this.worker_list = list;
-        this.lock = lock;
     }
 
     public void run(){
         try {
             while(true){
-                synchronized(lock){
-                    while(worker_list.size()>0){
-                        out.writeObject(worker_list.get(0));
-                        out.flush();
-                        worker_list.remove(0);
-                    }
-                }
+                out.writeInt(0);
+                out.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,3 +39,4 @@ public class SendToWorker extends Thread {
     }
     
 }
+

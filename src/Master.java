@@ -9,26 +9,36 @@ public class Master{
     // private static ArrayList<ArrayList<Waypoint>> master_list = new ArrayList<ArrayList<Waypoint>>();
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
-    private static Object workerListLock = new Object();
+    private static Object[] workerListLock = new Object[number_of_workers];
+    private static int[] fromworker = {1};
 
     
     public static void main(String args[]) {
         Master myMaster = new Master();
 
-        // Object workerListLock = new Object();
 
         for(int i=0; i<number_of_workers; i++){
             arrayOfWorkers[i] = new Worker2(i);
             ArrayList<ChunkedGPX> row = new ArrayList<ChunkedGPX>();
             workerList.add(row);
+
+            workerListLock[i] = new Object();
         }
 
-        myMaster.openServerForUser();
-        myMaster.openServerForWorkers();
+
+
+        myMaster.connectWithWorkers();
+
 
         for(int i=0; i<number_of_workers; i++){
             arrayOfWorkers[i].establishConnection();
         }
+
+        // System.out.println(fromworker[0]);
+
+        myMaster.openServerForUser();
+
+
     }
 
     /* Define the socket that receives requests */
@@ -52,8 +62,6 @@ public class Master{
                 /* Handle the request */
                 Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock);
                 dUser.start();
-
-                System.out.println(workerList.get(0).size());
             }
             
         } catch (IOException ioException) {
@@ -67,7 +75,7 @@ public class Master{
         }
     }
 
-    void openServerForWorkers() {
+    void connectWithWorkers() {
         try {
             int i = 0;
 
@@ -75,15 +83,19 @@ public class Master{
             sWorker = new ServerSocket(5432, 10);
 
 
-            while (true) {
+            while (i<number_of_workers) {
                 /* Accept the connection */
                 providerSocketWorker = sWorker.accept();
 
                 /* Handle the request */
-                Thread sender = new SendToWorker(providerSocketWorker, workerList.get(i), workerListLock);
-                Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList.get(i));
-                dWorker.start();
+                Thread sender = new SendToWorker(providerSocketWorker, workerList.get(i), workerListLock[i]);
+                Thread receiver = new ReceiveFromWorker(providerSocketUser, fromworker);
+                // Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList.get(i));
+                // dWorker.start();
+                sender.start();
+                receiver.start();
                 i++;
+                System.out.println(i);
             }
 
         } catch (IOException ioException) {

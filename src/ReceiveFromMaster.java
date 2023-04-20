@@ -1,13 +1,14 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
-public class ReceiveFromWorker extends Thread {
+public class ReceiveFromMaster extends Thread {
         ObjectInputStream in;
+        private ArrayList<ChunkedGPX> threadList = new ArrayList<ChunkedGPX>();
         // ObjectOutputStream out;
-        private int[] test;
 
     
-    public ReceiveFromWorker(Socket connection, int[] test){
+    public ReceiveFromMaster(Socket connection, ArrayList<ChunkedGPX> list){
         try {
             // out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -16,15 +17,14 @@ public class ReceiveFromWorker extends Thread {
             e.printStackTrace();
         }
 
-        this.test = test;
+        this.threadList = list;
     }
 
     public void run(){
         try { 
             while(true){
-                int r;
-                r = (int) in.readInt();
-                test[0] = r;
+                ChunkedGPX test = (ChunkedGPX) in.readObject();
+                threadList.add(test);
             }
         } catch (IOException e) {
             e.printStackTrace();
