@@ -25,16 +25,16 @@ public class SendToWorker extends Thread {
     public void run(){
         try {
             while(true){
-                synchronized(lock){
-                    while(worker_list.size()>0){
-                        out.writeObject(worker_list.get(0));
-                        out.flush();
-                        worker_list.remove(0);
-                    }
-                }
+                // synchronized(lock){
+                //     while(worker_list.size()>0){
+                //         out.writeObject(worker_list.get(0));
+                //         out.flush();
+                //         worker_list.remove(0);
+                //     }
+                // }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         } finally {

@@ -20,11 +20,11 @@ public class Worker2 {
             requestSocket = new Socket("localhost", 5432); //kalitera na oriso se allo arxio to host kai to port kai na to paro apo ekei para na to diloso edo
 
             /* Create the streams to send and receive data from server */
-            // out = new ObjectOutputStream(requestSocket.getOutputStream());
-            // in = new ObjectInputStream(requestSocket.getInputStream());
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            in = new ObjectInputStream(requestSocket.getInputStream());
 
-            Thread sender = new SendToMaster(requestSocket);
-            Thread receiver = new ReceiveFromMaster(requestSocket, myWorkerList);
+            Thread sender = new SendToMaster(out);
+            Thread receiver = new ReceiveFromMaster(in, myWorkerList);
             sender.start();
             receiver.start();
 
@@ -40,5 +40,10 @@ public class Worker2 {
                 ioException.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args){
+        Worker2 w = new Worker2(0);
+        w.establishConnection();
     }
 }

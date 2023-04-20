@@ -22,12 +22,12 @@ public class ReceiveFromWorker extends Thread {
     public void run(){
         try { 
             while(true){
-                int r;
-                r = (int) in.readInt();
-                test[0] = r;
+                // int r;
+                // r = (int) in.readInt();
+                // test[0] = r;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
