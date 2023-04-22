@@ -20,22 +20,24 @@ public class SendToMaster extends Thread {
 
     public void run(){
         try {
-            while(true){
-                // out.writeInt(0);
-                // out.flush();
-            }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
+            // while(true){
+            //     // out.writeInt(0);
+            //     // out.flush();
+            // }
+            out.writeInt(1);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
-        } finally {
+        }/* finally {
             try {
                 // in.close();
                 out.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-        }
+        }*/
 
     }
     

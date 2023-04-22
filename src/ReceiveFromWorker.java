@@ -19,25 +19,34 @@ public class ReceiveFromWorker extends Thread {
         this.test = test;
     }
 
+    public ReceiveFromWorker(ObjectInputStream in, int[] test){
+        this.in = in;
+        this.test = test;
+    }
+
+
     public void run(){
         try { 
-            while(true){
-                // int r;
-                // r = (int) in.readInt();
-                // test[0] = r;
-            }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
+            // while(true){
+            //     // int r;
+            //     // r = (int) in.readInt();
+            //     // test[0] = r;
+            // }
+
+            int num = (int) in.readInt();
+            System.out.println(num + " received from worker");
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
-        } finally {
+        }/* finally {
             try {
                 in.close();
                 // out.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-        }
+        }*/
 
     }
 }

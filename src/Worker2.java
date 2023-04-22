@@ -23,11 +23,14 @@ public class Worker2 {
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            int num = (int) in.readInt();
-            System.out.println(num);
+            // int num = (int) in.readInt();
+            // System.out.println(num);
 
-            // Thread receiver = new ReceiveFromMaster(in, myWorkerList);
-            // receiver.start();
+            Thread receiver = new ReceiveFromMaster(in, myWorkerList);
+            receiver.start();
+
+            // out.writeInt(1);
+            // out.flush();
             // Thread sender = new SendToMaster(out);
             // sender.start();
 
@@ -35,14 +38,14 @@ public class Worker2 {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } finally {
+        }/* finally {
             try {
                 in.close(); out.close();
                 requestSocket.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-        }
+        } */
     }
 
     public static void main(String[] args){

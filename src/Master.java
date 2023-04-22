@@ -79,6 +79,7 @@ public class Master{
                 providerSocketWorker = sWorker.accept();
 
                 ObjectOutputStream out = new ObjectOutputStream(providerSocketWorker.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(providerSocketWorker.getInputStream());
 
                 /* Handle the request */
                 Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
@@ -87,8 +88,11 @@ public class Master{
                 // out.writeInt(0);
                 // out.flush();
 
-                // Thread receiver = new ReceiveFromWorker(providerSocketWorker, fromworker);
-                // receiver.start();
+                Thread receiver = new ReceiveFromWorker(in, fromworker);
+                receiver.start();
+                // int num = (int) in.readInt();
+                // System.out.println(num);
+
                 i++;
                 
             }
