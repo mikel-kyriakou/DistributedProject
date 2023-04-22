@@ -22,19 +22,29 @@ public class SendToWorker extends Thread {
         this.lock = lock;
     }
 
+    public SendToWorker(ObjectOutputStream out, ArrayList<ChunkedGPX> list, Object lock){
+        this.out = out;
+        this.worker_list = list;
+        this.lock = lock;
+    }
+
+
     public void run(){
         try {
-            while(true){
-                // synchronized(lock){
-                //     while(worker_list.size()>0){
-                //         out.writeObject(worker_list.get(0));
-                //         out.flush();
-                //         worker_list.remove(0);
-                //     }
-                // }
-            }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
+            // while(true){
+            //     // synchronized(lock){
+            //     //     while(worker_list.size()>0){
+            //     //         out.writeObject(worker_list.get(0));
+            //     //         out.flush();
+            //     //         worker_list.remove(0);
+            //     //     }
+            //     // }
+            // }
+
+            out.writeInt(0);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         } finally {

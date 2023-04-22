@@ -23,10 +23,13 @@ public class Worker2 {
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            Thread sender = new SendToMaster(out);
-            Thread receiver = new ReceiveFromMaster(in, myWorkerList);
-            sender.start();
-            receiver.start();
+            int num = (int) in.readInt();
+            System.out.println(num);
+
+            // Thread receiver = new ReceiveFromMaster(in, myWorkerList);
+            // receiver.start();
+            // Thread sender = new SendToMaster(out);
+            // sender.start();
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");

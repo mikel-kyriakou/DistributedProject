@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class ReceiveFromMaster extends Thread {
@@ -20,14 +21,29 @@ public class ReceiveFromMaster extends Thread {
         this.threadList = list;
     }
 
+    public ReceiveFromMaster(Socket connection, ArrayList<ChunkedGPX> list){
+        try {
+            // out = new ObjectOutputStream(connection.getOutputStream());
+            in = new ObjectInputStream(connection.getInputStream());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // this.in = connection;
+        this.threadList = list;
+    }
+
     public void run(){
         try { 
-            while(true){
-                // ChunkedGPX test = (ChunkedGPX) in.readObject();
-                // threadList.add(test);
-            }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
+            // while(true){
+            //     // ChunkedGPX test = (ChunkedGPX) in.readObject();
+            //     // threadList.add(test);
+            // }
+            int num = (int) in.readInt();
+            System.out.println(num + " received from master");
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         } finally {

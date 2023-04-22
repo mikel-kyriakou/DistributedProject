@@ -17,7 +17,6 @@ public class Master{
         Master myMaster = new Master();
 
         for(int i=0; i<number_of_workers; i++){
-            // arrayOfWorkers[i] = new Worker2(i);
             ArrayList<ChunkedGPX> row = new ArrayList<ChunkedGPX>();
             workerList.add(row);
 
@@ -29,6 +28,8 @@ public class Master{
 
         System.out.println("Connect users");
         myMaster.openServerForUser();
+
+        myMaster.closeWorkersSocker();
     }
 
     /* Define the socket that receives requests */
@@ -77,25 +78,31 @@ public class Master{
                 /* Accept the connection */
                 providerSocketWorker = sWorker.accept();
 
+                ObjectOutputStream out = new ObjectOutputStream(providerSocketWorker.getOutputStream());
+
                 /* Handle the request */
-                Thread sender = new SendToWorker(providerSocketWorker, workerList.get(i), workerListLock[i]);
-                Thread receiver = new ReceiveFromWorker(providerSocketWorker, fromworker);
-                // Thread dWorker = new ActionsForWorkers(providerSocketWorker, workerList.get(i));
-                // dWorker.start();
+                Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
                 sender.start();
-                receiver.start();
+
+                // out.writeInt(0);
+                // out.flush();
+
+                // Thread receiver = new ReceiveFromWorker(providerSocketWorker, fromworker);
+                // receiver.start();
                 i++;
-                // System.out.println(i);
+                
             }
 
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } finally {
-            try {
-                providerSocketWorker.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+        }
+    }
+
+    void closeWorkersSocker(){
+        try {
+            providerSocketWorker.close();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
     }
 
