@@ -37,11 +37,19 @@ public class ReceiveFromMaster extends Thread {
     public void run(){
         try { 
             // while(true){
-            //     // ChunkedGPX test = (ChunkedGPX) in.readObject();
-            //     // threadList.add(test);
+            //     if(in.available()>0){
+            //         ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
+            //         System.out.println("received_chunked " + received_chunked);
+            //     }
             // }
-            int num = (int) in.readInt();
-            System.out.println(num + " received from master");
+
+            while(true){
+                if(in.available()>0){
+                    int received_chunked = (int) in.readInt();
+                    System.out.println("received_chunked " + received_chunked);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch(Exception e) {

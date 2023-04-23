@@ -30,6 +30,7 @@ public class Master{
         myMaster.openServerForUser();
 
         myMaster.closeWorkersSocker();
+
     }
 
     /* Define the socket that receives requests */

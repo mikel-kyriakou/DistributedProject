@@ -32,17 +32,26 @@ public class SendToWorker extends Thread {
     public void run(){
         try {
             // while(true){
-            //     // synchronized(lock){
-            //     //     while(worker_list.size()>0){
-            //     //         out.writeObject(worker_list.get(0));
-            //     //         out.flush();
-            //     //         worker_list.remove(0);
-            //     //     }
-            //     // }
+            //     synchronized(lock){
+            //         if(worker_list.size()>0){
+            //             ChunkedGPX toSend = worker_list.get(0);
+            //             out.writeObject(toSend);
+            //             out.flush();
+            //             worker_list.remove(0);
+            //         }
+            //     }   
             // }
 
-            out.writeInt(0);
-            out.flush();
+            while(true){
+                synchronized(lock){
+                    if(worker_list.size()>0){
+                        out.writeInt(0);
+                        out.flush();
+                        worker_list.remove(0);
+                    }
+                }   
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch(Exception e) {

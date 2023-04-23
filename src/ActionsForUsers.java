@@ -50,6 +50,7 @@ public class ActionsForUsers extends Thread{
         Waypoint wpt1, wpt2;
         ChunkedGPX wpts;
 
+
         while(wpt_list.size()>1){
             wpt1 = wpt_list.get(0);
             wpt2 = wpt_list.get(1);
@@ -61,6 +62,7 @@ public class ActionsForUsers extends Thread{
             wpt_list.remove(0);
         }
     }
+
 
     public void getgpxfile(File f){ //synchronize
         try{
@@ -90,7 +92,7 @@ public class ActionsForUsers extends Thread{
                     String dateTimeString = time; 
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); 
                     dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); 
-                    date = dateFormat.parse(dateTimeString); 
+                    date = dateFormat.parse(dateTimeString);
                 }
 
                 wpt_list.add(new Waypoint(creator, my_lat, my_lon, my_ele, date));
@@ -110,8 +112,6 @@ public class ActionsForUsers extends Thread{
             getgpxfile(f);
 
             roundRobin(wpt_list, list, index, lock);
-
-            // System.out.println(list.get(1).size());
 
             out.writeObject(wpt_list.get(0));
             out.flush();

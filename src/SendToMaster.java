@@ -26,6 +26,10 @@ public class SendToMaster extends Thread {
             // }
             out.writeInt(1);
             out.flush();
+
+            while(true){
+                sleep(1000);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch(Exception e) {

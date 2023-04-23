@@ -31,8 +31,8 @@ public class Worker2 {
 
             // out.writeInt(1);
             // out.flush();
-            // Thread sender = new SendToMaster(out);
-            // sender.start();
+            Thread sender = new SendToMaster(out);
+            sender.start();
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
