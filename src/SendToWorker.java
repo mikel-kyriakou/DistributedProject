@@ -45,9 +45,17 @@ public class SendToWorker extends Thread {
             while(true){
                 synchronized(lock){
                     if(worker_list.size()>0){
-                        out.writeInt(0);
+                        int toSend = worker_list.size();
+                        out.writeInt(toSend);
+                        out.flush();
+                        ChunkedGPX chunked = worker_list.get(0);
+                        out.writeObject(chunked);
                         out.flush();
                         worker_list.remove(0);
+                    }
+                    else{
+                        out.writeInt(0);
+                        out.flush();
                     }
                 }   
             }

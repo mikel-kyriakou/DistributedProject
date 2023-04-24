@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.instrument.Instrumentation;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -36,19 +37,27 @@ public class ReceiveFromMaster extends Thread {
 
     public void run(){
         try { 
+            int i=0;
+            while(true){
+                int size = (int) in.readInt();
+                if(size>0){
+                    i++;
+                    ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
+                    System.out.println(i);
+                }
+            }
+
+
+
+            // ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
+            // System.out.println("received_chunked " + received_chunked);
+
             // while(true){
             //     if(in.available()>0){
-            //         ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
+            //         int received_chunked = (int) in.readInt();
             //         System.out.println("received_chunked " + received_chunked);
             //     }
             // }
-
-            while(true){
-                if(in.available()>0){
-                    int received_chunked = (int) in.readInt();
-                    System.out.println("received_chunked " + received_chunked);
-                }
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
