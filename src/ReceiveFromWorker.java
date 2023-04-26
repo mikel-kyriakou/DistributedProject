@@ -27,10 +27,23 @@ public class ReceiveFromWorker extends Thread {
 
     public void run(){
         try { 
+            // while(true){
+            //     if(in.available()>0){
+            //         int num = (int) in.readInt();
+            //         System.out.println(num + " received from worker");
+            //     }
+            // }
+
             while(true){
-                if(in.available()>0){
-                    int num = (int) in.readInt();
-                    System.out.println(num + " received from worker");
+                int size = (int) in.readInt();
+                if(size>0){
+                    IntermidiateResult result = (IntermidiateResult) in.readObject();
+                    // synchronized(lock){
+                        // threadList.add(received_chunked);
+                    // }
+                    System.out.println(result);
+                }
+                else{
                 }
             }
 

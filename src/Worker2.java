@@ -8,6 +8,9 @@ public class Worker2 {
     ObjectInputStream in = null ;
     Socket requestSocket= null ;
     private ArrayList<ChunkedGPX> myWorkerList = new ArrayList<ChunkedGPX>();
+    Object lock = new Object();
+    Object resultsLock = new Object();
+    private ArrayList<IntermidiateResult> resultsList = new ArrayList<IntermidiateResult>();
 
     public Worker2(int id){
         this.id = id;
@@ -23,15 +26,9 @@ public class Worker2 {
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            // int num = (int) in.readInt();
-            // System.out.println(num);
-
-            Thread receiver = new ReceiveFromMaster(in, myWorkerList);
+            Thread receiver = new ReceiveFromMaster(in, myWorkerList, lock);
             receiver.start();
-
-            // out.writeInt(1);
-            // out.flush();
-            Thread sender = new SendToMaster(out);
+            Thread sender = new SendToMaster(out, resultsList, lock);
             sender.start();
 
         } catch (UnknownHostException unknownHost) {
@@ -48,8 +45,22 @@ public class Worker2 {
         } */
     }
 
+    public void calculate(){
+
+        while(true){
+            synchronized(lock){
+                if(myWorkerList.size()>0){
+                    Thread t = new WorkerCalculator(myWorkerList.get(0), resultsList, resultsLock);
+                    t.start();
+                    myWorkerList.remove(0);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args){
         Worker2 w = new Worker2(0);
         w.establishConnection();
+        w.calculate();
     }
 }

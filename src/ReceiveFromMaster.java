@@ -6,10 +6,11 @@ import java.util.ArrayList;
 public class ReceiveFromMaster extends Thread {
         ObjectInputStream in;
         private ArrayList<ChunkedGPX> threadList = new ArrayList<ChunkedGPX>();
+        Object lock;
         // ObjectOutputStream out;
 
     
-    public ReceiveFromMaster(ObjectInputStream connection, ArrayList<ChunkedGPX> list){
+    public ReceiveFromMaster(ObjectInputStream connection, ArrayList<ChunkedGPX> list, Object lock){
         // try {
         //     // out = new ObjectOutputStream(connection.getOutputStream());
         //     // in = new ObjectInputStream(connection.getInputStream());
@@ -20,6 +21,7 @@ public class ReceiveFromMaster extends Thread {
 
         this.in = connection;
         this.threadList = list;
+        this.lock = lock;
     }
 
     public ReceiveFromMaster(Socket connection, ArrayList<ChunkedGPX> list){
@@ -37,16 +39,22 @@ public class ReceiveFromMaster extends Thread {
 
     public void run(){
         try { 
-            int i=0;
             while(true){
                 int size = (int) in.readInt();
                 if(size>0){
-                    i++;
                     ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
-                    System.out.println(i);
+                    synchronized(lock){
+                        threadList.add(received_chunked);
+                    }
+                    break;
+                }
+                else{
                 }
             }
 
+            while(true){
+                sleep(100);
+            }
 
 
             // ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
@@ -54,6 +62,15 @@ public class ReceiveFromMaster extends Thread {
 
             // while(true){
             //     if(in.available()>0){
+            //         int received_chunked = (int) in.readInt();
+            //         System.out.println("received_chunked " + received_chunked);
+            //     }
+            // }
+
+            // byte[] buffer = new byte[1024];
+            // while(true){
+            //     //System.out.println(in.read(buffer));
+            //     if(in.read(buffer)>-1){
             //         int received_chunked = (int) in.readInt();
             //         System.out.println("received_chunked " + received_chunked);
             //     }
