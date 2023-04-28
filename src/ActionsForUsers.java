@@ -22,15 +22,15 @@ public class ActionsForUsers extends Thread{
     private Object[] lock;
 
 
-    public ActionsForUsers(Socket connection) {
-        try {
-            out = new ObjectOutputStream(connection.getOutputStream());
-            in = new ObjectInputStream(connection.getInputStream());
+    // public ActionsForUsers(Socket connection) {
+    //     try {
+    //         out = new ObjectOutputStream(connection.getOutputStream());
+    //         in = new ObjectInputStream(connection.getInputStream());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock) {
         try {

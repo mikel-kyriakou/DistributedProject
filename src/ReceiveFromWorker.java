@@ -1,47 +1,42 @@
 import java.io.*;
-import java.net.Socket;
+import java.util.ArrayList;
 
 public class ReceiveFromWorker extends Thread {
         ObjectInputStream in;
         // ObjectOutputStream out;
-        private int[] test;
-
+        ArrayList<IntermidiateResult> resultsFromWorker;
+        Object lock;
     
-    public ReceiveFromWorker(Socket connection, int[] test){
-        try {
-            // out = new ObjectOutputStream(connection.getOutputStream());
-            in = new ObjectInputStream(connection.getInputStream());
+    // public ReceiveFromWorker(Socket connection, ArrayList<IntermidiateResult> list, Object lock){
+    //     try {
+    //         // out = new ObjectOutputStream(connection.getOutputStream());
+    //         in = new ObjectInputStream(connection.getInputStream());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
 
-        this.test = test;
-    }
+    //     this.resultsFromWorker = list;
+    //     this.lock = lock;
+    // }
 
-    public ReceiveFromWorker(ObjectInputStream in, int[] test){
+    public ReceiveFromWorker(ObjectInputStream in, ArrayList<IntermidiateResult> list, Object lock){
         this.in = in;
-        this.test = test;
+        this.resultsFromWorker = list;
+        this.lock = lock;
     }
 
 
     public void run(){
         try { 
-            // while(true){
-            //     if(in.available()>0){
-            //         int num = (int) in.readInt();
-            //         System.out.println(num + " received from worker");
-            //     }
-            // }
-
             while(true){
                 int size = (int) in.readInt();
                 if(size>0){
                     IntermidiateResult result = (IntermidiateResult) in.readObject();
-                    // synchronized(lock){
-                        // threadList.add(received_chunked);
-                    // }
-                    System.out.println(result);
+                    synchronized(lock){
+                        resultsFromWorker.add(result);
+                    }
+                    System.out.println(resultsFromWorker.size());
                 }
                 else{
                 }

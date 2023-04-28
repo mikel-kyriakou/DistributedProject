@@ -1,5 +1,4 @@
 import java.io.*;
-import java.lang.instrument.Instrumentation;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -46,15 +45,14 @@ public class ReceiveFromMaster extends Thread {
                     synchronized(lock){
                         threadList.add(received_chunked);
                     }
-                    break;
                 }
                 else{
                 }
             }
 
-            while(true){
-                sleep(100);
-            }
+            // while(true){
+            //     sleep(100);
+            // }
 
 
             // ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();

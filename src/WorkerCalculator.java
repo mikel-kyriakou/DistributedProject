@@ -43,9 +43,6 @@ public class WorkerCalculator extends Thread {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = R * c;
 
-        double el1 = chunked.getWpt1().getElevation();
-        double el2 = chunked.getWpt2().getElevation();
-
         return d;
     }
 
@@ -72,8 +69,8 @@ public class WorkerCalculator extends Thread {
         }
     }
 
-    public double calcualteSpeed(double distance, long time){ //km per ms
-        return distance/time;
+    public double calcualteSpeed(double distance, long time){ //km per h
+        return (distance/time)*3600000;
     }
     
 }

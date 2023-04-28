@@ -5,13 +5,11 @@ import java.util.ArrayList;
 
 public class Master{
     private static final int number_of_workers = 1;
-    // private static Worker2[] arrayOfWorkers = new Worker2[number_of_workers];
-    // private static ArrayList<ArrayList<Waypoint>> master_list = new ArrayList<ArrayList<Waypoint>>();
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
     private static Object[] workerListLock = new Object[number_of_workers];
-    private static int[] fromworker = {1};
-
+    private Object intermidiateListLock = new Object();
+    private ArrayList<IntermidiateResult> intermidiateList = new ArrayList<IntermidiateResult>();
     
     public static void main(String args[]) {
         Master myMaster = new Master();
@@ -89,7 +87,7 @@ public class Master{
                 // out.writeInt(0);
                 // out.flush();
 
-                Thread receiver = new ReceiveFromWorker(in, fromworker);
+                Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock);
                 receiver.start();
                 // int num = (int) in.readInt();
                 // System.out.println(num);

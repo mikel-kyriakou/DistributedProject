@@ -52,20 +52,12 @@ public class SendToWorker extends Thread {
                         out.writeObject(chunked);
                         out.flush();
                         worker_list.remove(0);
-                        System.out.println(chunked.getWpt1());
-                        System.out.println(chunked.getWpt2());
-                        break;
                     }
                     else{
                         out.writeInt(0);
                         out.flush();
                     }
                 }   
-            }
-
-            while(true){
-
-                sleep(100);
             }
 
         } catch (IOException e) {
