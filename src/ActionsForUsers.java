@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date; 
 import java.util.TimeZone;
+import java.util.HashMap;
+
 
 
 public class ActionsForUsers extends Thread{
@@ -20,6 +22,9 @@ public class ActionsForUsers extends Thread{
     private ArrayList<ArrayList<ChunkedGPX>> list;
     private int[] index;
     private Object[] lock;
+    private HashMap<String, Integer> counters;
+    private Object countersLock;
+    private String user;
 
 
     // public ActionsForUsers(Socket connection) {
@@ -32,7 +37,7 @@ public class ActionsForUsers extends Thread{
     //     }
     // }
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock) {
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object countersLock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -44,6 +49,8 @@ public class ActionsForUsers extends Thread{
         this.list = list;
         this.index = index;
         this.lock = lock;
+        this.counters = counters;
+        this.countersLock = countersLock;
     }
 
     public void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock){
@@ -74,6 +81,7 @@ public class ActionsForUsers extends Thread{
             doc.getDocumentElement().normalize();  
             Element x = doc.getDocumentElement();
             String creator = x.getAttribute("creator");
+            this.user = creator;
             NodeList nodeList = doc.getElementsByTagName("wpt");  
             // nodeList is not iterable, so we are using for loop  
             for (int itr = 0; itr < nodeList.getLength(); itr++)   
@@ -105,11 +113,24 @@ public class ActionsForUsers extends Thread{
 
     }
 
+    public void updateCounters(){
+        synchronized(countersLock){
+            if(counters.get(user) == null){
+                counters.put(user, wpt_list.size()-1);
+            }
+            else{
+                counters.put(user, counters.get(user)+wpt_list.size()-1);
+            }
+        }
+    }
+
     public void run() {
         try {
             File f= (File) in.readObject();
 
             getgpxfile(f);
+
+            updateCounters();
 
             roundRobin(wpt_list, list, index, lock);
 

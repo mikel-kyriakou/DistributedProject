@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Master{
@@ -10,6 +11,8 @@ public class Master{
     private static Object[] workerListLock = new Object[number_of_workers];
     private Object intermidiateListLock = new Object();
     private ArrayList<IntermidiateResult> intermidiateList = new ArrayList<IntermidiateResult>();
+    private HashMap<String, Integer> usersCounters = new HashMap<String, Integer>();
+    private Object usersCountersLock = new Object();
     
     public static void main(String args[]) {
         Master myMaster = new Master();
@@ -50,7 +53,7 @@ public class Master{
                 providerSocketUser = sUser.accept();
 
                 /* Handle the request */
-                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock);
+                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersCounters, usersCountersLock);
                 dUser.start();
             }
             
@@ -87,7 +90,7 @@ public class Master{
                 // out.writeInt(0);
                 // out.flush();
 
-                Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock);
+                Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock, usersCounters, usersCountersLock);
                 receiver.start();
                 // int num = (int) in.readInt();
                 // System.out.println(num);
