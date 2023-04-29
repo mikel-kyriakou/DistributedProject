@@ -70,9 +70,9 @@ public class Result implements Serializable{
     public String toString() {
         return "{" +
             " user='" + getUser() + "'" +
-            ", averageDistance='" + getAverageDistance() + "'" +
-            ", averageElevation='" + getAverageElevation() + "'" +
-            ", averageTime='" + getAverageTime() + "'" +
+            ", averageDistance='" + getAverageDistance() + " km'" +
+            ", averageElevation='" + getAverageElevation() + " m'" +
+            ", averageTime='" + getAverageTime() + " msec'" +
             "}";
     }
 }

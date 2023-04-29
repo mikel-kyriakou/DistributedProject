@@ -3,7 +3,6 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Worker {
-    private int id;
     ObjectOutputStream out= null ;
     ObjectInputStream in = null ;
     Socket requestSocket= null ;
@@ -12,8 +11,7 @@ public class Worker {
     Object resultsLock = new Object();
     private ArrayList<IntermidiateResult> resultsList = new ArrayList<IntermidiateResult>();
 
-    public Worker(int id){
-        this.id = id;
+    public Worker(){
     }
 
     public void establishConnection() {
@@ -59,7 +57,7 @@ public class Worker {
     }
 
     public static void main(String[] args){
-        Worker w = new Worker(0);
+        Worker w = new Worker();
         w.establishConnection();
         w.calculate();
     }

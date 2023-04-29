@@ -22,7 +22,7 @@ public class User extends Thread{
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            user_route = new File("src/gpxs/route2.gpx");
+            user_route = new File("src/gpxs/route1.gpx");
 
             out.writeObject(user_route);
             out.flush();

@@ -9,8 +9,6 @@ public class Master{
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
     private static Object[] workerListLock = new Object[number_of_workers];
-    // private Object intermidiateListLock = new Object();
-    // private ArrayList<IntermidiateResult> intermidiateList = new ArrayList<IntermidiateResult>();
     private HashMap<String, Integer> usersRoutesCounters = new HashMap<>();
     private Object usersRoutesCountersLock = new Object();
     private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>();
@@ -100,16 +98,8 @@ public class Master{
                 Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
                 sender.start();
 
-                // out.writeInt(0);
-                // out.flush();
-
-                // Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock, usersCounters, usersCountersLock);
-                // receiver.start();
-
-                Thread receiver_test = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock);
-                receiver_test.start();
-                // int num = (int) in.readInt();
-                // System.out.println(num);
+                Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock);
+                receiver.start();
 
                 i++;
                 
