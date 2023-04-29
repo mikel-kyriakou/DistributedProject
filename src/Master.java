@@ -9,10 +9,21 @@ public class Master{
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
     private static Object[] workerListLock = new Object[number_of_workers];
-    private Object intermidiateListLock = new Object();
-    private ArrayList<IntermidiateResult> intermidiateList = new ArrayList<IntermidiateResult>();
-    private HashMap<String, Integer> usersCounters = new HashMap<String, Integer>();
-    private Object usersCountersLock = new Object();
+    // private Object intermidiateListLock = new Object();
+    // private ArrayList<IntermidiateResult> intermidiateList = new ArrayList<IntermidiateResult>();
+    private HashMap<String, Integer> usersRoutesCounters = new HashMap<>();
+    private Object usersRoutesCountersLock = new Object();
+    private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>();
+    private Object usersWaypointsCountersLock = new Object();
+    private HashMap<String, Double> sumDistance = new HashMap<>();
+    private Object sumDistanceLock = new Object();
+    private HashMap<String, Double> sumElevation = new HashMap<>();
+    private Object sumElevationLock = new Object();
+    private HashMap<String, Long> sumTime = new HashMap<>();
+    private Object sumTimeLock = new Object();
+    private HashMap<String, Result> results = new HashMap<>();
+    private Object resultsLock = new Object();
+
     
     public static void main(String args[]) {
         Master myMaster = new Master();
@@ -27,10 +38,12 @@ public class Master{
         System.out.println("Connect workers");
         myMaster.connectWithWorkers();
 
+        myMaster.startReducer();
+
         System.out.println("Connect users");
         myMaster.openServerForUser();
 
-        myMaster.closeWorkersSocker();
+        myMaster.closeWorkersSocket();
 
     }
 
@@ -53,7 +66,7 @@ public class Master{
                 providerSocketUser = sUser.accept();
 
                 /* Handle the request */
-                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersCounters, usersCountersLock);
+                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock);
                 dUser.start();
             }
             
@@ -90,8 +103,11 @@ public class Master{
                 // out.writeInt(0);
                 // out.flush();
 
-                Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock, usersCounters, usersCountersLock);
-                receiver.start();
+                // Thread receiver = new ReceiveFromWorker(in, intermidiateList, intermidiateListLock, usersCounters, usersCountersLock);
+                // receiver.start();
+
+                Thread receiver_test = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock);
+                receiver_test.start();
                 // int num = (int) in.readInt();
                 // System.out.println(num);
 
@@ -104,12 +120,17 @@ public class Master{
         }
     }
 
-    void closeWorkersSocker(){
+    void closeWorkersSocket(){
         try {
             providerSocketWorker.close();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    void startReducer(){
+        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock);
+        reducer.start();
     }
 
 }

@@ -22,9 +22,14 @@ public class ActionsForUsers extends Thread{
     private ArrayList<ArrayList<ChunkedGPX>> list;
     private int[] index;
     private Object[] lock;
-    private HashMap<String, Integer> counters;
-    private Object countersLock;
+    private HashMap<String, Integer> routesCounters;
+    private Object routesCountersLock;
+    private HashMap<String, Integer> waypointsCounters;
+    private Object waypointsCountersLock;
     private String user;
+    private HashMap<String, Result> results = new HashMap<>();
+    private Object resultsLock = new Object();
+
 
 
     // public ActionsForUsers(Socket connection) {
@@ -37,7 +42,7 @@ public class ActionsForUsers extends Thread{
     //     }
     // }
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object countersLock) {
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object routesCountersLock, HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, HashMap<String, Result> results, Object resultsLock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -49,8 +54,12 @@ public class ActionsForUsers extends Thread{
         this.list = list;
         this.index = index;
         this.lock = lock;
-        this.counters = counters;
-        this.countersLock = countersLock;
+        this.routesCounters = counters;
+        this.routesCountersLock = routesCountersLock;
+        this.waypointsCounters = waypointsCounters;
+        this.waypointsCountersLock = waypointsCountersLock;
+        this.results = results;
+        this.resultsLock = resultsLock;
     }
 
     public void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock){
@@ -114,15 +123,46 @@ public class ActionsForUsers extends Thread{
     }
 
     public void updateCounters(){
-        synchronized(countersLock){
-            if(counters.get(user) == null){
-                counters.put(user, wpt_list.size()-1);
+        synchronized(routesCountersLock){
+            if(routesCounters.get(user) == null){
+                routesCounters.put(user, 1);
             }
             else{
-                counters.put(user, counters.get(user)+wpt_list.size()-1);
+                routesCounters.put(user, routesCounters.get(user)+1);
+            }
+        }
+
+        synchronized(waypointsCountersLock){
+            if(waypointsCounters.get(user) == null){
+                waypointsCounters.put(user, wpt_list.size());
+                System.out.println("Action for users: added to wpt counter " + wpt_list.size() + "  " + waypointsCounters.get(user));
+            }
+            else{
+                System.out.println("hello");
+                waypointsCounters.put(user, waypointsCounters.get(user)+wpt_list.size());
+            }
+        }
+
+    }
+
+    public Result waitForResult(String user){
+        while(true){
+            synchronized(resultsLock){
+                if(results.get(user)!=null){
+                    System.out.println("Actions for users: got results");
+                    return results.get(user);
+                }
+            }
+
+            try {
+                System.out.println("Actions for users: no results");
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
+
 
     public void run() {
         try {
@@ -134,7 +174,11 @@ public class ActionsForUsers extends Thread{
 
             roundRobin(wpt_list, list, index, lock);
 
-            out.writeObject(wpt_list.get(0));
+            Result result = waitForResult(user);
+
+            // System.out.println("Action for users: got results");
+
+            out.writeObject(result);
             out.flush();
 
         } catch (IOException e) {

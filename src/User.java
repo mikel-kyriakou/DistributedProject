@@ -22,14 +22,14 @@ public class User extends Thread{
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            user_route = new File("src/gpxs/route1.gpx");
+            user_route = new File("src/gpxs/route2.gpx");
 
             out.writeObject(user_route);
             out.flush();
 
             /* Print the received result from server */
-            Waypoint f = (Waypoint) in.readObject();
-            System.out.println("Server>" + f);
+            Result myResult = (Result) in.readObject();
+            System.out.println("Server>" + myResult);
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
