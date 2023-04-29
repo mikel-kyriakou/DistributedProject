@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Worker2 {
+public class Worker {
     private int id;
     ObjectOutputStream out= null ;
     ObjectInputStream in = null ;
@@ -12,7 +12,7 @@ public class Worker2 {
     Object resultsLock = new Object();
     private ArrayList<IntermidiateResult> resultsList = new ArrayList<IntermidiateResult>();
 
-    public Worker2(int id){
+    public Worker(int id){
         this.id = id;
     }
 
@@ -59,7 +59,7 @@ public class Worker2 {
     }
 
     public static void main(String[] args){
-        Worker2 w = new Worker2(0);
+        Worker w = new Worker(0);
         w.establishConnection();
         w.calculate();
     }

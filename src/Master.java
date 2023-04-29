@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 
 public class Master{
-    private static final int number_of_workers = 1;
+    private static final int number_of_workers = 2;
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
     private static Object[] workerListLock = new Object[number_of_workers];

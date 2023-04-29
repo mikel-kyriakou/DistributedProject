@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Worker",
+            "request": "launch",
+            "mainClass": "Worker",
+            "projectName": "Distributed_Systems_Project_6d732b3c"
+        },
+        {
+            "type": "java",
             "name": "Worker2",
             "request": "launch",
             "mainClass": "Worker2",
