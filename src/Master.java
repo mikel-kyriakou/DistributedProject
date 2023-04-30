@@ -19,6 +19,8 @@ public class Master{
     private Object sumElevationLock = new Object();
     private HashMap<String, Long> sumTime = new HashMap<>();
     private Object sumTimeLock = new Object();
+    private HashMap<String, Double> sumSpeed = new HashMap<>();
+    private Object sumSpeedLock = new Object();
     private HashMap<String, Result> results = new HashMap<>();
     private Object resultsLock = new Object();
 
@@ -98,7 +100,7 @@ public class Master{
                 Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
                 sender.start();
 
-                Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock);
+                Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock);
                 receiver.start();
 
                 i++;
@@ -119,7 +121,7 @@ public class Master{
     }
 
     void startReducer(){
-        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock);
+        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock, results, resultsLock);
         reducer.start();
     }
 

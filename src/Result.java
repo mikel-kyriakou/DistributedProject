@@ -2,16 +2,18 @@ import java.io.Serializable;
 
 public class Result implements Serializable{
     private String user;
-    private double averageDistance, averageElevation, averageTime;
+    private double averageDistance, averageElevation, averageTime, averageSpeed;
+
 
     public Result() {
     }
 
-    public Result(String user, double averageDistance, double averageElevation, double averageTime) {
+    public Result(String user, double averageDistance, double averageElevation, double averageTime, double averageSpeed) {
         this.user = user;
         this.averageDistance = averageDistance;
         this.averageElevation = averageElevation;
         this.averageTime = averageTime;
+        this.averageSpeed = averageSpeed;
     }
 
     public String getUser() {
@@ -46,6 +48,14 @@ public class Result implements Serializable{
         this.averageTime = averageTime;
     }
 
+    public double getAverageSpeed() {
+        return this.averageSpeed;
+    }
+
+    public void setAverageSpeed(double averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
     public Result user(String user) {
         setUser(user);
         return this;
@@ -66,6 +76,11 @@ public class Result implements Serializable{
         return this;
     }
 
+    public Result averageSpeed(double averageSpeed) {
+        setAverageSpeed(averageSpeed);
+        return this;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -73,6 +88,9 @@ public class Result implements Serializable{
             ", averageDistance='" + getAverageDistance() + " km'" +
             ", averageElevation='" + getAverageElevation() + " m'" +
             ", averageTime='" + getAverageTime() + " msec'" +
+            ", averageSpeed='" + getAverageSpeed() + " m/s'" +
             "}";
     }
+
+
 }

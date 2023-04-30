@@ -11,10 +11,12 @@ public class Reducer extends Thread {
     private Object sumElevationLock = new Object();
     private HashMap<String, Long> sumTime = new HashMap<>();
     private Object sumTimeLock = new Object();
+    private HashMap<String, Double> sumSpeed = new HashMap<>();
+    private Object sumSpeedLock = new Object();
     private HashMap<String, Result> results = new HashMap<>();
     private Object resultsLock = new Object();
 
-    public Reducer(HashMap<String,Integer> usersRoutesCounters, Object usersRoutesCountersLock, HashMap<String,Integer> usersWaypointsCounters, Object usersWaypointsCountersLock, HashMap<String,Double> sumDistance, Object sumDistanceLock, HashMap<String,Double> sumElevation, Object sumElevationLock, HashMap<String,Long> sumTime, Object sumTimeLock, HashMap<String,Result> results, Object resultsLock) {
+    public Reducer(HashMap<String,Integer> usersRoutesCounters, Object usersRoutesCountersLock, HashMap<String,Integer> usersWaypointsCounters, Object usersWaypointsCountersLock, HashMap<String,Double> sumDistance, Object sumDistanceLock, HashMap<String,Double> sumElevation, Object sumElevationLock, HashMap<String,Long> sumTime, Object sumTimeLock, HashMap<String, Double> sumSpeed, Object sumSpeedLock, HashMap<String,Result> results, Object resultsLock) {
         this.usersRoutesCounters = usersRoutesCounters;
         this.usersRoutesCountersLock = usersRoutesCountersLock;
         this.usersWaypointsCounters = usersWaypointsCounters;
@@ -25,13 +27,17 @@ public class Reducer extends Thread {
         this.sumElevationLock = sumElevationLock;
         this.sumTime = sumTime;
         this.sumTimeLock = sumTimeLock;
+        this.sumSpeed = sumSpeed;
+        this.sumSpeedLock = sumSpeedLock;
         this.results = results;
         this.resultsLock = resultsLock;
     }
 
     public Result generateResult(String user){
-        double sumDist, sumEle;
+        double sumDist, sumEle, sumS;
         long sumT;
+        int routes, wpts;
+        
         synchronized(sumDistanceLock){
             sumDist = sumDistance.get(user);
         }
@@ -44,9 +50,15 @@ public class Reducer extends Thread {
             sumT = sumTime.get(user);
         }
 
-        int routes = usersRoutesCounters.get(user);
+        // synchronized(sumSpeedLock){
+        //     sumS = sumSpeed.get(user);
+        // }
 
-        return new Result(user, sumDist/routes, sumEle/routes, sumT/routes);
+        synchronized(usersRoutesCountersLock){
+            routes = usersRoutesCounters.get(user);
+        }
+
+        return new Result(user, sumDist/routes, sumEle/routes, sumT/routes, ((sumDist*1000)/routes)/((sumT/1000)/routes));
     }
 
     public void run(){

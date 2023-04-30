@@ -15,6 +15,8 @@ public class ReceiveFromWorker extends Thread {
         private Object sumElevationLock = new Object();
         private HashMap<String, Long> sumTime = new HashMap<>();
         private Object sumTimeLock = new Object();
+        private HashMap<String, Double> sumSpeed = new HashMap<>();
+        private Object sumSpeedLock = new Object();
     
     
     
@@ -39,7 +41,7 @@ public class ReceiveFromWorker extends Thread {
     //     this.countersLock = countersLock;
     // }
 
-    public ReceiveFromWorker(ObjectInputStream in, HashMap<String, Integer> counters, Object countersLock, HashMap<String, Double> sumDistance,  Object sumDistanceLock, HashMap<String, Double> sumElevation, Object sumElevationLock, HashMap<String, Long> sumTime, Object sumTimeLock){
+    public ReceiveFromWorker(ObjectInputStream in, HashMap<String, Integer> counters, Object countersLock, HashMap<String, Double> sumDistance,  Object sumDistanceLock, HashMap<String, Double> sumElevation, Object sumElevationLock, HashMap<String, Long> sumTime, Object sumTimeLock, HashMap<String, Double> sumSpeed, Object sumSpeedLock){
         this.in = in;
         this.counters = counters;
         this.countersLock = countersLock;
@@ -49,6 +51,8 @@ public class ReceiveFromWorker extends Thread {
         this.sumElevationLock = sumElevationLock;
         this.sumTime = sumTime;
         this.sumTimeLock = sumTimeLock;
+        this.sumSpeed = sumSpeed;
+        this.sumSpeedLock = sumSpeedLock;
     }
 
     public void updateHashMaps(IntermidiateResult result){
@@ -77,6 +81,15 @@ public class ReceiveFromWorker extends Thread {
             }
             else{
                 sumTime.put(result.getUser(), sumTime.get(result.getUser())+result.getTime());
+            }
+        }
+
+        synchronized(sumSpeedLock){
+            if(sumSpeed.get(result.getUser()) == null){
+                sumSpeed.put(result.getUser(), result.getSpeed());
+            }
+            else{
+                sumSpeed.put(result.getUser(), sumSpeed.get(result.getUser())+result.getSpeed());
             }
         }
 
