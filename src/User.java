@@ -30,10 +30,11 @@ public class User extends Thread{
             FileInputStream propsInput = new FileInputStream(configFilePath);
             Properties prop = new Properties();
             prop.load(propsInput);
-            int port = Integer.valueOf(prop.getProperty("MASTER_PORT_FOR_USERS"));    
+            int port = Integer.valueOf(prop.getProperty("MASTER_PORT_FOR_USERS"));
+            String host = prop.getProperty("MASTER_HOST");
 
             /* Create socket for contacting the server on port 4321*/
-            requestSocket = new Socket("localhost", port);
+            requestSocket = new Socket(host, port);
 
             /* Create the streams to send and receive data from server */
             out = new ObjectOutputStream(requestSocket.getOutputStream());

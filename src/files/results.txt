@@ -1,0 +1,14 @@
+{
+User = user1
+Aerage Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
+{
+User = user1
+Aerage Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
