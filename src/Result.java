@@ -1,9 +1,11 @@
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.math.RoundingMode;
 
 public class Result implements Serializable{
     private String user;
     private double averageDistance, averageElevation, averageTime, averageSpeed;
-
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
     public Result() {
     }
@@ -83,12 +85,13 @@ public class Result implements Serializable{
 
     @Override
     public String toString() {
-        return "{" +
-            " user='" + getUser() + "'" +
-            ", averageDistance='" + getAverageDistance() + " km'" +
-            ", averageElevation='" + getAverageElevation() + " m'" +
-            ", averageTime='" + getAverageTime() + " msec'" +
-            ", averageSpeed='" + getAverageSpeed() + " m/s'" +
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return "{\n" +
+            "User = " + getUser() + "\n" +
+            "Aerage Distance = " + df.format(getAverageDistance()) + " km\n" +
+            "Average Elevation = " + df.format(getAverageElevation()) + " m\n" +
+            "Average Time = " + df.format(getAverageTime()/1000) + " sec\n" +
+            "Average Speed = " + df.format(getAverageSpeed()) + " km/h\n" +
             "}";
     }
 

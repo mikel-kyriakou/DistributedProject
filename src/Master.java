@@ -2,13 +2,13 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Properties;
 
 public class Master{
-    private static final int number_of_workers = 2;
+    private static int number_of_workers;
     private static ArrayList<ArrayList<ChunkedGPX>> workerList = new ArrayList<ArrayList<ChunkedGPX>>();
     private int[] workerIndex = {0};
-    private static Object[] workerListLock = new Object[number_of_workers];
+    private static Object[] workerListLock;
     private HashMap<String, Integer> usersRoutesCounters = new HashMap<>();
     private Object usersRoutesCountersLock = new Object();
     private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>();
@@ -28,6 +28,23 @@ public class Master{
     public static void main(String args[]) {
         Master myMaster = new Master();
 
+        /* Get data from config file */
+        try {
+            String configFilePath = "src/config.properties";
+            FileInputStream propsInput = new FileInputStream(configFilePath);
+            Properties prop = new Properties();
+            prop.load(propsInput);
+            number_of_workers = Integer.valueOf(prop.getProperty("NUMBER_OF_WORKERS"));
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /* Initialize workerListLock */
+        workerListLock = new Object[number_of_workers];
+
         for(int i=0; i<number_of_workers; i++){
             ArrayList<ChunkedGPX> row = new ArrayList<ChunkedGPX>();
             workerList.add(row);
@@ -35,14 +52,18 @@ public class Master{
             workerListLock[i] = new Object();
         }
 
+        /* Connect with workers */
         System.out.println("Connect workers");
         myMaster.connectWithWorkers();
 
+        /* Start reducer thread */
         myMaster.startReducer();
 
+        /* Open server for users */
         System.out.println("Connect users");
         myMaster.openServerForUser();
 
+        /* Close sockets */
         myMaster.closeWorkersSocket();
 
     }
@@ -83,6 +104,7 @@ public class Master{
 
     void connectWithWorkers() {
         try {
+            /* Index for workers */
             int i = 0;
 
             /* Create Server Socket */
@@ -121,7 +143,7 @@ public class Master{
     }
 
     void startReducer(){
-        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock, results, resultsLock);
+        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock);
         reducer.start();
     }
 

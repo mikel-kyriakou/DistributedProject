@@ -69,8 +69,8 @@ public class WorkerCalculator extends Thread {
         }
     }
 
-    public double calcualteSpeed(double distance, long time){ //km per h
-        return (distance/time)*3600000;
+    public double calcualteSpeed(double distance, long time){ //km per msec
+        return (distance/time);
     }
     
 }

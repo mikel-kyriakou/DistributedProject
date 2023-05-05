@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Worker {
     ObjectOutputStream out= null ;
@@ -11,16 +12,19 @@ public class Worker {
     Object resultsLock = new Object();
     private ArrayList<IntermidiateResult> resultsList = new ArrayList<IntermidiateResult>();
 
-    public Worker(){
-    }
-
     public void establishConnection() {
         try {
+            /* Get data from config file */
+            String configFilePath = "src/config.properties";
+            FileInputStream propsInput = new FileInputStream(configFilePath);
+            Properties prop = new Properties();
+            prop.load(propsInput);
+            int port = Integer.valueOf(prop.getProperty("MASTER_PORT_FOR_WORKERS"));           
 
             /* Create socket for contacting the server on port 4321*/
-            requestSocket = new Socket("localhost", 5432); //kalitera na oriso se allo arxio to host kai to port kai na to paro apo ekei para na to diloso edo
+            requestSocket = new Socket("localhost", port);
 
-            /* Create the streams to send and receive data from server */
+            /* Create the streams to send and receive data from server and start the threads. */
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
@@ -33,18 +37,11 @@ public class Worker {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        }/* finally {
-            try {
-                in.close(); out.close();
-                requestSocket.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        } */
+        }
     }
 
+    /* This method start a threat for each worker that makes calculation for every inter result we receive. */
     public void calculate(){
-
         while(true){
             synchronized(lock){
                 if(myWorkerList.size()>0){

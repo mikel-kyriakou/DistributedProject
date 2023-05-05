@@ -30,18 +30,6 @@ public class ActionsForUsers extends Thread{
     private HashMap<String, Result> results = new HashMap<>();
     private Object resultsLock = new Object();
 
-
-
-    // public ActionsForUsers(Socket connection) {
-    //     try {
-    //         out = new ObjectOutputStream(connection.getOutputStream());
-    //         in = new ObjectInputStream(connection.getInputStream());
-
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
     public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object routesCountersLock, HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, HashMap<String, Result> results, Object resultsLock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
@@ -62,10 +50,10 @@ public class ActionsForUsers extends Thread{
         this.resultsLock = resultsLock;
     }
 
+    /* This method adds chunked gpxs to workers lists using round robin */
     public void roundRobin(ArrayList<Waypoint> wpt_list, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock){
         Waypoint wpt1, wpt2;
         ChunkedGPX wpts;
-
 
         while(wpt_list.size()>1){
             wpt1 = wpt_list.get(0);
@@ -80,7 +68,8 @@ public class ActionsForUsers extends Thread{
     }
 
 
-    public void getgpxfile(File f){ //synchronize
+    /* This methos reads gpx file and adds waypoints to a local list */
+    public void getgpxfile(File f){
         try{
             //an instance of factory that gives a document builder  
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -119,9 +108,9 @@ public class ActionsForUsers extends Thread{
         catch (Exception e){  
         e.printStackTrace();  
         }  
-
     }
 
+    /* This method updates counters to keep count of routes and waypoints received by each user */
     public void updateCounters(){
         synchronized(routesCountersLock){
             if(routesCounters.get(user) == null){
@@ -145,6 +134,7 @@ public class ActionsForUsers extends Thread{
 
     }
 
+    /* This method waits for result to be added to results list and then returns the result */
     public Result waitForResult(String user){
         while(true){
             synchronized(resultsLock){
@@ -175,8 +165,6 @@ public class ActionsForUsers extends Thread{
             roundRobin(wpt_list, list, index, lock);
 
             Result result = waitForResult(user);
-
-            // System.out.println("Action for users: got results");
 
             out.writeObject(result);
             out.flush();

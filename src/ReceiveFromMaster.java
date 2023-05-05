@@ -1,42 +1,21 @@
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class ReceiveFromMaster extends Thread {
         ObjectInputStream in;
         private ArrayList<ChunkedGPX> threadList = new ArrayList<ChunkedGPX>();
         Object lock;
-        // ObjectOutputStream out;
-
     
     public ReceiveFromMaster(ObjectInputStream connection, ArrayList<ChunkedGPX> list, Object lock){
-        // try {
-        //     // out = new ObjectOutputStream(connection.getOutputStream());
-        //     // in = new ObjectInputStream(connection.getInputStream());
-
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
-
         this.in = connection;
         this.threadList = list;
         this.lock = lock;
     }
 
-    public ReceiveFromMaster(Socket connection, ArrayList<ChunkedGPX> list){
-        try {
-            // out = new ObjectOutputStream(connection.getOutputStream());
-            in = new ObjectInputStream(connection.getInputStream());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // this.in = connection;
-        this.threadList = list;
-    }
-
     public void run(){
+        /* We are constantly receiving a number and when we get an int over 0 we also read a chunked gpx.
+         * Then we add this chunked gpx to the worker list.
+         */
         try { 
             while(true){
                 int size = (int) in.readInt();
@@ -49,31 +28,6 @@ public class ReceiveFromMaster extends Thread {
                 else{
                 }
             }
-
-            // while(true){
-            //     sleep(100);
-            // }
-
-
-            // ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
-            // System.out.println("received_chunked " + received_chunked);
-
-            // while(true){
-            //     if(in.available()>0){
-            //         int received_chunked = (int) in.readInt();
-            //         System.out.println("received_chunked " + received_chunked);
-            //     }
-            // }
-
-            // byte[] buffer = new byte[1024];
-            // while(true){
-            //     //System.out.println(in.read(buffer));
-            //     if(in.read(buffer)>-1){
-            //         int received_chunked = (int) in.readInt();
-            //         System.out.println("received_chunked " + received_chunked);
-            //     }
-            // }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch(Exception e) {
@@ -81,7 +35,6 @@ public class ReceiveFromMaster extends Thread {
         } finally {
             try {
                 in.close();
-                // out.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
