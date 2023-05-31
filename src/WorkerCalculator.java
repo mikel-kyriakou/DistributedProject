@@ -19,9 +19,30 @@ public class WorkerCalculator extends Thread {
         double elevation = calculateElevation();
         double speed = calcualteSpeed(distance, time);
 
+        ArrayList<Integer> segments = findSegments();
+
         synchronized(lock){
-            list.add(new IntermidiateResult(user, distance, elevation, speed, time));
+            list.add(new IntermidiateResult(user, distance, elevation, speed, time, segments));
         }
+    }
+
+    public ArrayList<Integer> findSegments(){
+        ArrayList<Integer> seg1 = chunked.getWpt1().getSegments();
+        ArrayList<Integer> seg2 = chunked.getWpt2().getSegments();
+
+        ArrayList<Integer> toReturn = new ArrayList<>();
+
+        if(seg1.size()==0 || seg2.size()==0){
+            return toReturn;
+        }
+
+        for(int i:seg1){
+            if(seg2.contains(i)){
+                toReturn.add(i);
+            }
+        }
+
+        return toReturn;
     }
 
     public double calculateDistance(){ //km

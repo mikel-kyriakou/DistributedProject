@@ -25,8 +25,6 @@ public class ReceiveFromMaster extends Thread {
                         threadList.add(received_chunked);
                     }
                 }
-                else{
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();

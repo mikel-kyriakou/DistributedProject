@@ -19,10 +19,12 @@ public class Master{
     private Object sumElevationLock = new Object();
     private HashMap<String, Long> sumTime = new HashMap<>();
     private Object sumTimeLock = new Object();
-    private HashMap<String, Double> sumSpeed = new HashMap<>();
-    private Object sumSpeedLock = new Object();
     private HashMap<String, Result> results = new HashMap<>();
     private Object resultsLock = new Object();
+    private HashMap<Segment, ArrayList<UserLeaderboard>> segments = new HashMap<>();
+    private Object segmentsLock = new Object();
+    private HashMap<String, ArrayList<IntermidiateResult>> intermidateResults = new HashMap<>();
+    private Object intermidateResultsLock = new Object();
 
     
     public static void main(String args[]) {
@@ -56,8 +58,11 @@ public class Master{
         System.out.println("Connect workers");
         myMaster.connectWithWorkers();
 
-        /* Start reducer thread */
-        myMaster.startReducer();
+        // /* Start reducer thread */
+        // myMaster.startReducer();
+
+        /* Segment testing thread */
+        myMaster.startSegmentTester();
 
         /* Open server for users */
         System.out.println("Connect users");
@@ -87,8 +92,9 @@ public class Master{
                 providerSocketUser = sUser.accept();
 
                 /* Handle the request */
-                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock);
+                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock, segments, segmentsLock);
                 dUser.start();
+                startReducer();
             }
             
         } catch (IOException ioException) {
@@ -122,7 +128,8 @@ public class Master{
                 Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
                 sender.start();
 
-                Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock);
+                //Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock);
+                Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, intermidateResults, intermidateResultsLock);
                 receiver.start();
 
                 i++;
@@ -143,8 +150,13 @@ public class Master{
     }
 
     void startReducer(){
-        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock);
+        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock, intermidateResults, intermidateResultsLock, segments, segmentsLock);
         reducer.start();
+    }
+
+    void startSegmentTester(){
+        Thread tester = new SegmentTestThread(segments, segmentsLock);
+        tester.start();
     }
 
 }

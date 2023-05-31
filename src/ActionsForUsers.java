@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import java.text.DateFormat; 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date; 
 import java.util.TimeZone;
 import java.util.HashMap;
@@ -29,8 +30,10 @@ public class ActionsForUsers extends Thread{
     private String user;
     private HashMap<String, Result> results = new HashMap<>();
     private Object resultsLock = new Object();
+    private HashMap<Segment, ArrayList<UserLeaderboard>> segmentsThread = new HashMap<>();
+    private Object segmentsLockThread = new Object();
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object routesCountersLock, HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, HashMap<String, Result> results, Object resultsLock) {
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object routesCountersLock, HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, HashMap<String, Result> results, Object resultsLock, HashMap<Segment, ArrayList<UserLeaderboard>> segments, Object segmentsLock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -48,6 +51,8 @@ public class ActionsForUsers extends Thread{
         this.waypointsCountersLock = waypointsCountersLock;
         this.results = results;
         this.resultsLock = resultsLock;
+        this.segmentsThread = segments;
+        this.segmentsLockThread = segmentsLock;
     }
 
     /* This method adds chunked gpxs to workers lists using round robin */
@@ -69,7 +74,7 @@ public class ActionsForUsers extends Thread{
 
 
     /* This methos reads gpx file and adds waypoints to a local list */
-    public void getgpxfile(File f){
+    public Boolean getgpxfile(File f){
         try{
             //an instance of factory that gives a document builder  
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -79,6 +84,14 @@ public class ActionsForUsers extends Thread{
             doc.getDocumentElement().normalize();  
             Element x = doc.getDocumentElement();
             String creator = x.getAttribute("creator");
+            /* Determine if it is a segment by the creators name. Segments have creator as "gpxgenerator.com" */
+            if(creator.equals("gpxgenerator.com")){
+                Segment s = new Segment(f);
+                synchronized(segmentsLockThread){
+                    segmentsThread.put(s, new ArrayList<>());
+                }
+                return false;
+            }
             this.user = creator;
             NodeList nodeList = doc.getElementsByTagName("wpt");  
             // nodeList is not iterable, so we are using for loop  
@@ -104,10 +117,15 @@ public class ActionsForUsers extends Thread{
                 wpt_list.add(new Waypoint(creator, my_lat, my_lon, my_ele, date));
 
             } 
+            
+            return true;
+
         }
         catch (Exception e){  
         e.printStackTrace();  
         }  
+        
+        return false;
     }
 
     /* This method updates counters to keep count of routes and waypoints received by each user */
@@ -124,10 +142,8 @@ public class ActionsForUsers extends Thread{
         synchronized(waypointsCountersLock){
             if(waypointsCounters.get(user) == null){
                 waypointsCounters.put(user, wpt_list.size());
-                System.out.println("Action for users: added to wpt counter " + wpt_list.size() + "  " + waypointsCounters.get(user));
             }
             else{
-                System.out.println("hello");
                 waypointsCounters.put(user, waypointsCounters.get(user)+wpt_list.size());
             }
         }
@@ -135,17 +151,17 @@ public class ActionsForUsers extends Thread{
     }
 
     /* This method waits for result to be added to results list and then returns the result */
-    public Result waitForResult(String user){
+    public Result waitForResult(){
         while(true){
             synchronized(resultsLock){
                 if(results.get(user)!=null){
-                    System.out.println("Actions for users: got results");
-                    return results.get(user);
+                    Result toReturn = results.get(user);
+                    results.remove(user);
+                    return toReturn;
                 }
             }
 
             try {
-                System.out.println("Actions for users: no results");
                 sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -153,21 +169,60 @@ public class ActionsForUsers extends Thread{
         }
     }
 
+    /* Check if the route contains any segment */
+    public void checkRouteHasSegment(){
+
+        synchronized(segmentsLockThread){
+            if(segmentsThread.size()==0){
+                return;
+            }
+            
+            for(Segment s:segmentsThread.keySet()){
+                ArrayList<Waypoint> segment = s.getWpts();
+                for(int i=0; i<wpt_list.size(); i++){
+                    if(wpt_list.get(i).equals(segment.get(0)) && wpt_list.size()>i+segment.size()){
+                        for(int j=0; j<segment.size(); j++){
+                            if(wpt_list.get(i+j).equals(segment.get(j))){
+                                break;
+                            }
+                        }
+                        updateWptsSegment(s.hashCode(), i, i+segment.size());
+                    }
+                }
+            }
+        }
+    }
+
+    /* Give Waypoints the name of the segment */
+    public void updateWptsSegment(int name, int startIndex, int stopIndex){
+        for(int i=startIndex; i<=stopIndex;i++){
+            wpt_list.get(i).addSegment(name);
+        }
+    }
 
     public void run() {
         try {
             File f= (File) in.readObject();
 
-            getgpxfile(f);
+            Boolean isRoute = getgpxfile(f);
 
-            updateCounters();
+            if(isRoute){
 
-            roundRobin(wpt_list, list, index, lock);
+                updateCounters();
 
-            Result result = waitForResult(user);
+                checkRouteHasSegment();
 
-            out.writeObject(result);
-            out.flush();
+                roundRobin(wpt_list, list, index, lock);
+
+                Result result = waitForResult();
+
+                out.writeObject(result);
+                out.flush();
+            }
+            else{
+                out.writeObject("Segment set");
+                out.flush();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

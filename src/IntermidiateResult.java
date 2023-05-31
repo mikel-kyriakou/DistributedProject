@@ -1,20 +1,23 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class IntermidiateResult implements Serializable{
     private String user;
     private double distance, elevation, speed;
     private long time;
+    private ArrayList<Integer> segments = new ArrayList<>();
 
 
     public IntermidiateResult() {
     }
 
-    public IntermidiateResult(String user, double distance, double elevation, double speed, long time) {
+    public IntermidiateResult(String user, double distance, double elevation, double speed, long time, ArrayList<Integer> segments) {
         this.user = user;
         this.distance = distance;
         this.elevation = elevation;
         this.speed = speed;
         this.time = time;
+        this.segments = segments;
     }
 
     public String getUser() {
@@ -80,6 +83,10 @@ public class IntermidiateResult implements Serializable{
     public IntermidiateResult time(long time) {
         setTime(time);
         return this;
+    }
+
+    public ArrayList<Integer> getSegments(){
+        return segments;
     }
 
     @Override

@@ -2,11 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Properties;
 
-public class User extends Thread{
+public class UserForSegment extends Thread{
     private File user_route;
-
-    public User(){
-    }
 
     /* This method writes the results received from master to a txt file */
     public void writeFile(Result result){ 
@@ -41,27 +38,22 @@ public class User extends Thread{
             in = new ObjectInputStream(requestSocket.getInputStream());
 
             /* Get the gpx file */
-            user_route = new File("src/gpxs/route1.gpx");
+            user_route = new File("src/gpxs/segment2.gpx");
 
             /* Send the gpx */
             out.writeObject(user_route);
             out.flush();
 
-
-            /* Print the received result from server */
-            Result myResult = (Result)in.readObject();
-            System.out.println(myResult);
-
-            /* Update file with the results */
-            writeFile(myResult);
-
+            /* Get message */
+            Object message = in.readObject();
+            System.out.println(message);
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch(ClassNotFoundException e){
+            e.printStackTrace();
         } finally {
             try {
                 in.close(); out.close();
@@ -73,6 +65,6 @@ public class User extends Thread{
     }
 
     public static void main(String[] args) {
-        new User().start();
+        new UserForSegment().start();
     }
 }
