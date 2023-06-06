@@ -11,7 +11,7 @@ public class Master{
     private static Object[] workerListLock;
     private HashMap<String, Integer> usersRoutesCounters = new HashMap<>();
     private Object usersRoutesCountersLock = new Object();
-    private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>();
+    private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>(); 
     private Object usersWaypointsCountersLock = new Object();
     private HashMap<String, Double> sumDistance = new HashMap<>();
     private Object sumDistanceLock = new Object();
@@ -58,12 +58,6 @@ public class Master{
         System.out.println("Connect workers");
         myMaster.connectWithWorkers();
 
-        // /* Start reducer thread */
-        // myMaster.startReducer();
-
-        /* Segment testing thread */
-        myMaster.startSegmentTester();
-
         /* Open server for users */
         System.out.println("Connect users");
         myMaster.openServerForUser();
@@ -94,6 +88,8 @@ public class Master{
                 /* Handle the request */
                 Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock, segments, segmentsLock);
                 dUser.start();
+
+                /* Start Reducer thread every time a user opens socket */
                 startReducer();
             }
             
@@ -128,7 +124,6 @@ public class Master{
                 Thread sender = new SendToWorker(out, workerList.get(i), workerListLock[i]);
                 sender.start();
 
-                //Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, sumSpeed, sumSpeedLock);
                 Thread receiver = new ReceiveFromWorker(in, usersWaypointsCounters, usersWaypointsCountersLock, intermidateResults, intermidateResultsLock);
                 receiver.start();
 
@@ -152,11 +147,6 @@ public class Master{
     void startReducer(){
         Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock, intermidateResults, intermidateResultsLock, segments, segmentsLock);
         reducer.start();
-    }
-
-    void startSegmentTester(){
-        Thread tester = new SegmentTestThread(segments, segmentsLock);
-        tester.start();
     }
 
 }

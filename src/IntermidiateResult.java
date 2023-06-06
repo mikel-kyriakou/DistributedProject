@@ -24,65 +24,20 @@ public class IntermidiateResult implements Serializable{
         return this.user;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
-
     public double getDistance() {
         return this.distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
     }
 
     public double getElevation() {
         return this.elevation;
     }
 
-    public void setElevation(double elevation) {
-        this.elevation = elevation;
-    }
-
     public double getSpeed() {
         return this.speed;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
     public long getTime() {
         return this.time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
-    }
-
-    public IntermidiateResult user(String user) {
-        setUser(user);
-        return this;
-    }
-
-    public IntermidiateResult distance(double distance) {
-        setDistance(distance);
-        return this;
-    }
-
-    public IntermidiateResult elevation(double elevation) {
-        setElevation(elevation);
-        return this;
-    }
-
-    public IntermidiateResult speed(double speed) {
-        setSpeed(speed);
-        return this;
-    }
-
-    public IntermidiateResult time(long time) {
-        setTime(time);
-        return this;
     }
 
     public ArrayList<Integer> getSegments(){

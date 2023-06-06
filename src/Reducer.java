@@ -47,30 +47,7 @@ public class Reducer extends Thread {
         this.segmentsThreadLock = segmentsThreadLock;
     }
 
-    // public Result generateResult(String user){
-    //     double sumDist, sumEle;
-    //     long sumT;
-    //     int routes;
-        
-    //     synchronized(sumDistanceLock){
-    //         sumDist = sumDistance.get(user);
-    //     }
-
-    //     synchronized(sumElevationLock){
-    //         sumEle= sumElevation.get(user);
-    //     }
-
-    //     synchronized(sumTimeLock){
-    //         sumT = sumTime.get(user);
-    //     }
-
-    //     synchronized(usersRoutesCountersLock){
-    //         routes = usersRoutesCounters.get(user);
-    //     }
-
-    //     return new Result(user, sumDist/routes, sumEle/routes, sumT/routes, (sumDist/routes)/(sumT/routes)*3600000);
-    // }
-
+    /* A method that is called to start the reduce phase for the user that we pass as an argument */
     public void updateResults(String user){
         ArrayList<IntermidiateResult> userResults;
         double sumDist, sumEle;
@@ -78,6 +55,7 @@ public class Reducer extends Thread {
         int routes;
         HashMap<Integer, Long> segmentResults = new HashMap<>();
 
+        /* Get the list of intermidiate results for the user */
         synchronized(intResultsThreadLock){
             userResults = intResultsThread.get(user);
         }
@@ -85,6 +63,9 @@ public class Reducer extends Thread {
         for(IntermidiateResult ir:userResults){
             updateHashMaps(ir);
 
+            /* Checks if an intermidiate result belongs to a segment and updates the statistics for each segment it belongs to.
+             * segmentResults is a hashmap we keep in the thread.
+            */
             if(ir.getSegments().size()>0){
                 for(int s:ir.getSegments()){
                     if(segmentResults.get(s)==null){
@@ -95,7 +76,9 @@ public class Reducer extends Thread {
             }
         }
 
-
+        /* Updates the main hashmap of the segments based on the segmentResults we calculated. Every time we add or change a UserLeaderboard
+         * in an arraylist, we sort it based on the timing.
+         */
         synchronized(segmentsThreadLock){
             for(Segment s:segmentsThread.keySet()){
                 for(int code:segmentResults.keySet()){
@@ -147,6 +130,7 @@ public class Reducer extends Thread {
         results.put(user, result);
     }
 
+    /* This method get as an argument an intermidiate result and updates all hashmaps with the stats */
     public void updateHashMaps(IntermidiateResult result){
         String user = result.getUser();
 
@@ -184,21 +168,34 @@ public class Reducer extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         boolean running = true;
+
+        /* In every loop it checks every users wpt counter list if it is equal to 1 and then it starts the reduce phase.
+         * The counter has to be 1 because we add to this hashmap the amount of waypoints we receive from the user and we sub the amount 
+         * of intermidiate results we get from the worker, so for n waypoints we create n-1 intermidiate results and n-(n-1)=1.
+         */
         while(running){
             synchronized(usersWaypointsCountersLock){
                 for(String user:usersWaypointsCounters.keySet()){
                     if(usersWaypointsCounters.get(user)==1){
                         synchronized(resultsLock){
                             updateResults(user);
-                            running = false;
                             usersWaypointsCounters.remove(user);
+                            /* Print leaderboard for testing purpose */
+                            synchronized(segmentsThreadLock){
+                                System.out.println(segmentsThread);
+                            }
+
+                            /* Runnig to false to stop the loop because everytime a user connects to master another reducer starts.
+                             * The reason for this is to not run the reducer unnecessarily when none uses the program.
+                             */
+                            running = false;
                             break;
                         }
                     }
                 }
             }
-
 
             try {
                 sleep(1000);

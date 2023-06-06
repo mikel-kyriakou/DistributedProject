@@ -41,7 +41,7 @@ public class User extends Thread{
             in = new ObjectInputStream(requestSocket.getInputStream());
 
             /* Get the gpx file */
-            user_route = new File("src/gpxs/route1.gpx");
+            user_route = new File("src/gpxs/route6.gpx");
 
             /* Send the gpx */
             out.writeObject(user_route);

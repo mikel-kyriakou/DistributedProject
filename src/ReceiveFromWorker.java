@@ -49,51 +49,6 @@ public class ReceiveFromWorker extends Thread {
         this.intResultsThreadLock = intResultsThreadLock;
     }
 
-
-    /* This method gets an intermidiate result and based on it, it updates the counters for the user */
-    public void updateHashMaps(IntermidiateResult result){
-        // synchronized(sumDistanceLock){
-        //     if(sumDistance.get(result.getUser())==null){
-        //         sumDistance.put(result.getUser(), result.getDistance());
-        //     }
-        //     else{
-        //         sumDistance.put(result.getUser(), sumDistance.get(result.getUser())+result.getDistance());
-        //     }
-        // }
-
-        // synchronized(sumElevationLock){
-        //     if(sumElevation.get(result.getUser())==null){
-        //         sumElevation.put(result.getUser(), result.getElevation());
-        //     }
-        //     else{
-        //         sumElevation.put(result.getUser(), sumElevation.get(result.getUser())+result.getElevation());
-        //     }
-        // }
-
-        // synchronized(sumTimeLock){
-        //     if(sumTime.get(result.getUser())==null){
-        //         sumTime.put(result.getUser(), result.getTime());
-        //     }
-        //     else{
-        //         sumTime.put(result.getUser(), sumTime.get(result.getUser())+result.getTime());
-        //     }
-        // }
-
-        // synchronized(sumSpeedLock){
-        //     if(sumSpeed.get(result.getUser()) == null){
-        //         sumSpeed.put(result.getUser(), result.getSpeed());
-        //     }
-        //     else{
-        //         sumSpeed.put(result.getUser(), sumSpeed.get(result.getUser())+result.getSpeed());
-        //     }
-        // }
-
-        synchronized(countersLock){
-            counters.put(result.getUser(), counters.get(result.getUser())-1);
-        }
-
-    }
-
     public void updateIntResults(IntermidiateResult result){
         ArrayList<IntermidiateResult> userList;
         synchronized(intResultsThreadLock){
@@ -116,16 +71,12 @@ public class ReceiveFromWorker extends Thread {
     public void run(){
         /* We are constantly reading an int and when its over 0 we read in inter result. */
         try {
-            int counter1 = 0;
-            int counter2 = 0;
             while(true){
                 int size = (int) in.readInt();
                 if(size>0){
                     IntermidiateResult result = (IntermidiateResult) in.readObject();
-                    counter1++;
                     if(result!=null){
                         updateIntResults(result);
-                        counter2++;
                     }
                 }
             }

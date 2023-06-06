@@ -47,7 +47,6 @@ public class UserForSegment extends Thread{
             /* Get message */
             Object message = in.readObject();
             System.out.println(message);
-
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
