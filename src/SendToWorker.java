@@ -42,10 +42,10 @@ public class SendToWorker extends Thread {
                         out.flush();
                         worker_list.remove(0);
                     }
-                    else{
-                        out.writeInt(0);
-                        out.flush();
-                    }
+                    // else{
+                    //     out.writeInt(0);
+                    //     out.flush();
+                    // }
                 }   
             }
 

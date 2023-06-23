@@ -20,6 +20,10 @@ public class Reducer extends Thread {
     private Object intResultsThreadLock = new Object();
     private HashMap<Segment, ArrayList<UserLeaderboard>> segmentsThread = new HashMap<>();
     private Object segmentsThreadLock = new Object();
+    private double routeDistance = 0;
+    private double routeElevation = 0;
+    private long routeTime = 0;
+
 
     public Reducer(HashMap<String,Integer> usersRoutesCounters, Object usersRoutesCountersLock, 
                    HashMap<String,Integer> usersWaypointsCounters, Object usersWaypointsCountersLock, 
@@ -62,6 +66,7 @@ public class Reducer extends Thread {
 
         for(IntermidiateResult ir:userResults){
             updateHashMaps(ir);
+            updateRouteResults(ir);
 
             /* Checks if an intermidiate result belongs to a segment and updates the statistics for each segment it belongs to.
              * segmentResults is a hashmap we keep in the thread.
@@ -125,7 +130,12 @@ public class Reducer extends Thread {
             routes = usersRoutesCounters.get(user);
         }
 
-        Result result = new Result(user, sumDist/routes, sumEle/routes, sumT/routes, (sumDist/routes)/(sumT/routes)*3600000);
+        /* This creates a result containing the average values of all routes */
+        // Result result = new Result(user, sumDist/routes, sumEle/routes, sumT/routes, (sumDist/routes)/(sumT/routes)*3600000);
+
+        /* This creates a result for the specific route uploaded by user */
+        Result result = new Result(user, routeDistance, routeElevation, routeTime, routeDistance/routeTime*3600000);
+
 
         results.put(user, result);
     }
@@ -160,6 +170,12 @@ public class Reducer extends Thread {
                 sumTime.put(user, sumTime.get(user)+result.getTime());
             }
         }
+    }
+
+    public void updateRouteResults(IntermidiateResult result){
+        routeDistance += result.getDistance();
+        routeElevation += result.getElevation();
+        routeTime += result.getTime();
     }
 
     public void run(){

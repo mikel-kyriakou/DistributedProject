@@ -2,7 +2,8 @@ import java.io.*;
 import javax.xml.parsers.DocumentBuilderFactory;  
 import javax.xml.parsers.DocumentBuilder;  
 import org.w3c.dom.Document;  
-import org.w3c.dom.NodeList;  
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.w3c.dom.Node;  
 import org.w3c.dom.Element;  
 import java.text.DateFormat; 
@@ -16,7 +17,7 @@ public class Segment {
     private String name;
     private ArrayList<Waypoint> segmentWpts = new ArrayList<>();
 
-    public Segment(File f){
+    public Segment(String f){
         getSegmentFile(f);
     }
 
@@ -26,18 +27,23 @@ public class Segment {
         this.segmentWpts = segmentWpts;
     }
 
-    public Segment(String name, File f){
+    public Segment(String name, String f){
         this.name = name;
         getSegmentFile(f);
     }
 
-    public void getSegmentFile(File f){
+    public String getName(){
+        return this.name;
+    }
+
+    public void getSegmentFile(String f){
         try{
             //an instance of factory that gives a document builder  
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
             //an instance of builder to parse the specified xml file  
             DocumentBuilder db = dbf.newDocumentBuilder();  
-            Document doc = db.parse(f);  
+            InputSource is = new InputSource(new StringReader(f));
+            Document doc = db.parse(is);
             doc.getDocumentElement().normalize();  
             Element x = doc.getDocumentElement();
             String creator = x.getAttribute("creator");

@@ -1,0 +1,244 @@
+{
+User = user1
+Average Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
+Segment set
+Segment set
+Segment set
+{
+User = user1
+Average Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
+Segment set
+{
+User = user1
+Average Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
+Segment set
+{
+User = user3
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.14 km
+Average Elevation = 55.19 m
+Average Time = 996.00 sec
+Average Speed = 18.60 km/h
+}
+{
+User = user1
+Average Distance = 5.15 km
+Average Elevation = 55.61 m
+Average Time = 1126.00 sec
+Average Speed = 16.48 km/h
+}
+Segment set
+{
+User = user1
+Average Distance = 4.37 km
+Average Elevation = 39.95 m
+Average Time = 1117.67 sec
+Average Speed = 14.07 km/h
+}
+{
+User = user2
+Average Distance = 1.72 km
+Average Elevation = 6.98 m
+Average Time = 433.00 sec
+Average Speed = 14.26 km/h
+}
+{
+User = user2
+Average Distance = 1.96 km
+Average Elevation = 19.11 m
+Average Time = 704.00 sec
+Average Speed = 10.01 km/h
+}
+{
+User = user2
+Average Distance = 2.20 km
+Average Elevation = 31.24 m
+Average Time = 975.00 sec
+Average Speed = 8.13 km/h
+}
+{
+User = user2
+Average Distance = 2.20 km
+Average Elevation = 31.24 m
+Average Time = 975.00 sec
+Average Speed = 8.13 km/h
+}
+{
+User = user2
+Average Distance = 2.20 km
+Average Elevation = 31.24 m
+Average Time = 975.00 sec
+Average Speed = 8.13 km/h
+}
+Segment set
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+{
+User = user2
+Average Distance = 1.72 km
+Average Elevation = 6.98 m
+Average Time = 433.00 sec
+Average Speed = 14.26 km/h
+}
+{
+User = user2
+Average Distance = 1.96 km
+Average Elevation = 19.11 m
+Average Time = 704.00 sec
+Average Speed = 10.01 km/h
+}
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+{
+User = user2
+Average Distance = 1.72 km
+Average Elevation = 6.98 m
+Average Time = 433.00 sec
+Average Speed = 14.26 km/h
+}
+{
+User = user2
+Average Distance = 1.96 km
+Average Elevation = 19.11 m
+Average Time = 704.00 sec
+Average Speed = 10.01 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+{
+User = user1
+Average Distance = 5.16 km
+Average Elevation = 56.03 m
+Average Time = 1256.00 sec
+Average Speed = 14.80 km/h
+}
+Segment set
+{
+User = user1
+Average Distance = 2.80 km
+Average Elevation = 8.62 m
+Average Time = 1101.00 sec
+Average Speed = 9.14 km/h
+}
+[{ user='user1', time='79000'}]
+Segment set
+Segment set
+{
+User = gpxgenerator.com
+Average Distance = 3.59 km
+Average Elevation = 46.32 m
+Average Time = 479.00 sec
+Average Speed = 26.95 km/h
+}
+Segment set
+Segment set
+{
+User = user4
+Average Distance = 3.59 km
+Average Elevation = 46.32 m
+Average Time = 479.00 sec
+Average Speed = 26.95 km/h
+}

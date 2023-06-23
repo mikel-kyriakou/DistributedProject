@@ -27,10 +27,10 @@ public class SendToMaster extends Thread {
                         out.flush();
                         list.remove(0);
                     }
-                    else{
-                        out.writeInt(0);
-                        out.flush();
-                    }
+                    // else{
+                    //     out.writeInt(0);
+                    //     out.flush();
+                    // }
                 }   
             }
         } catch (IOException e) {

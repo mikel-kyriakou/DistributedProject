@@ -9,15 +9,40 @@ public class User extends Thread{
     }
 
     /* This method writes the results received from master to a txt file */
-    public void writeFile(Result result){ 
+    // public void writeFile(Result result){ 
+    //     try {
+    //         FileWriter myWriter = new FileWriter("src/files/results.txt", true);
+    //         myWriter.write(result.toString() + "\n");
+    //         myWriter.close();
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+
+    public void writeFile(String result){
         try {
             FileWriter myWriter = new FileWriter("src/files/results.txt", true);
-            myWriter.write(result.toString() + "\n");
+            myWriter.write(result + "\n");
             myWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public String readFile(File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            return content.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error reading file.";
+        }
+    }
+
 
     public void run() {
         ObjectOutputStream out= null ;
@@ -41,27 +66,69 @@ public class User extends Thread{
             in = new ObjectInputStream(requestSocket.getInputStream());
 
             /* Get the gpx file */
-            user_route = new File("src/gpxs/route6.gpx");
+            // user_route = new File("src\\gpxs\\segment2.gpx");
+            // String fileContent = readFile(user_route);
 
-            /* Send the gpx */
-            out.writeObject(user_route);
+            // /* Send the gpx */
+            // out.writeInt(1);
+            // out.writeUTF("segment");
+            // out.writeUTF(fileContent);
+            // out.flush();
+
+            // /* Print the received result from server */
+            // String myResult = (String)in.readUTF();
+            // System.out.println(myResult);
+
+            /* Get the gpx file */
+            // user_route = new File("src\\gpxs\\route6.gpx");
+            // String fileContent = readFile(user_route);
+
+            // /* Send the gpx */
+            // out.writeInt(2);
+            // // out.writeUTF("user4");
+            // out.writeUTF(fileContent);
+            // out.flush();
+
+            // /* Print the received result from server */
+            // String myResult = (String)in.readUTF();
+            // System.out.println(myResult);
+
+            // /* Leaderboard */
+            out.writeInt(3);
+            out.writeUTF("user1");
             out.flush();
+            int numLeaderboards = (int) in.readInt();
+            for(int i=0; i<numLeaderboards; i++){
+                String name = (String) in.readUTF();
+                System.out.println(name);
+                int numRunners = (int) in.readInt();
+                for(int j=0; j<numRunners; j++){
+                    String runner = (String) in.readUTF();
+                    long time = (long) in.readLong();
+                    System.out.println(runner + " " + time);
+                }
+            }
 
+            // /* Send the gpx */
+            // out.writeInt(4);
+            // out.writeUTF("user4");
+            // out.flush();
 
-            /* Print the received result from server */
-            Result myResult = (Result)in.readObject();
-            System.out.println(myResult);
+            // /* Print the received result from server */
+            // String myResult = (String)in.readUTF();
+            // System.out.println(myResult);
+
 
             /* Update file with the results */
-            writeFile(myResult);
+            // writeFile(myResult);
 
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        // } catch(ClassNotFoundException e) {
+        //     throw new RuntimeException(e);
         } finally {
             try {
                 in.close(); out.close();

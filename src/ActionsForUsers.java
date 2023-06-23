@@ -3,13 +3,13 @@ import java.net.*;
 import javax.xml.parsers.DocumentBuilderFactory;  
 import javax.xml.parsers.DocumentBuilder;  
 import org.w3c.dom.Document;  
-import org.w3c.dom.NodeList;  
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.w3c.dom.Node;  
 import org.w3c.dom.Element;  
 import java.text.DateFormat; 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date; 
 import java.util.TimeZone;
 import java.util.HashMap;
@@ -32,8 +32,22 @@ public class ActionsForUsers extends Thread{
     private Object resultsLock = new Object();
     private HashMap<Segment, ArrayList<UserLeaderboard>> segmentsThread = new HashMap<>();
     private Object segmentsLockThread = new Object();
+    private HashMap<String, Double> sumDistanceThread = new HashMap<>();
+    private Object sumDistanceThreadLock = new Object();
+    private HashMap<String, Double> sumElevationThread = new HashMap<>();
+    private Object sumElevationThreadLock = new Object();
+    private HashMap<String, Long> sumTimeThread = new HashMap<>();
+    private Object sumTimeThreadLock = new Object();
 
-    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, HashMap<String, Integer> counters, Object routesCountersLock, HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, HashMap<String, Result> results, Object resultsLock, HashMap<Segment, ArrayList<UserLeaderboard>> segments, Object segmentsLock) {
+
+    public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, 
+                            HashMap<String, Integer> counters, Object routesCountersLock, 
+                            HashMap<String, Integer> waypointsCounters, Object waypointsCountersLock, 
+                            HashMap<String, Result> results, Object resultsLock, 
+                            HashMap<Segment, ArrayList<UserLeaderboard>> segments, Object segmentsLock, 
+                            HashMap<String, Double> sumDistanceThread, Object sumDistanceThreadLock, 
+                            HashMap<String, Double> sumElevationThread, Object sumElevationThreadLock, 
+                            HashMap<String, Long> sumTimeThread, Object sumTimeThreadLock) {
         try {
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
@@ -53,6 +67,12 @@ public class ActionsForUsers extends Thread{
         this.resultsLock = resultsLock;
         this.segmentsThread = segments;
         this.segmentsLockThread = segmentsLock;
+        this.sumDistanceThread = sumDistanceThread;
+        this.sumDistanceThreadLock = sumDistanceThreadLock;
+        this.sumElevationThread = sumElevationThread;
+        this.sumElevationThreadLock = sumElevationThreadLock;
+        this.sumTimeThread = sumTimeThread;
+        this.sumTimeThreadLock = sumTimeThreadLock;
     }
 
     /* This method adds chunked gpxs to workers lists using round robin */
@@ -74,24 +94,25 @@ public class ActionsForUsers extends Thread{
 
 
     /* This methos reads gpx file and adds waypoints to a local list */
-    public Boolean getgpxfile(File f){
+    public void getgpxfile(String f){
         try{
             //an instance of factory that gives a document builder  
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
             //an instance of builder to parse the specified xml file  
-            DocumentBuilder db = dbf.newDocumentBuilder();  
-            Document doc = db.parse(f);  
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(f));
+            Document doc = db.parse(is);
             doc.getDocumentElement().normalize();  
             Element x = doc.getDocumentElement();
             String creator = x.getAttribute("creator");
             /* Determine if it is a segment by the creators name. Segments have creator as "gpxgenerator.com" */
-            if(creator.equals("gpxgenerator.com")){
-                Segment s = new Segment(f);
-                synchronized(segmentsLockThread){
-                    segmentsThread.put(s, new ArrayList<>());
-                }
-                return false;
-            }
+            // if(creator.equals("gpxgenerator.com")){
+            //     Segment s = new Segment(f);
+            //     synchronized(segmentsLockThread){
+            //         segmentsThread.put(s, new ArrayList<>());
+            //     }
+            //     return false;
+            // }
             this.user = creator;
             NodeList nodeList = doc.getElementsByTagName("wpt");  
             // nodeList is not iterable, so we are using for loop  
@@ -118,14 +139,10 @@ public class ActionsForUsers extends Thread{
 
             } 
             
-            return true;
-
         }
-        catch (Exception e){  
-        e.printStackTrace();  
+        catch (Exception e){
+        e.printStackTrace();
         }  
-        
-        return false;
     }
 
     /* This method updates counters to keep count of routes and waypoints received by each user */
@@ -176,19 +193,132 @@ public class ActionsForUsers extends Thread{
             if(segmentsThread.size()==0){
                 return;
             }
-            
+            // for(Segment s:segmentsThread.keySet()){
+            //     ArrayList<Waypoint> segment = s.getWpts();
+            //     for(int i=0; i<wpt_list.size(); i++){
+            //         boolean hasSegment = false;
+            //         if(wpt_list.get(i).equals(segment.get(0)) && wpt_list.size()-i>segment.size()){
+            //             hasSegment = true;
+            //             int j=0;
+            //             i++;
+            //             while(j<segment.size()-1){
+            //                 if(wpt_list.get(i).equals(segment.get(j))){
+            //                     i++;
+            //                 }
+            //                 else if(wpt_list.get(i).equals(segment.get(j+1))){
+            //                     i++;
+            //                     j++;
+            //                 }
+            //                 else{
+            //                     hasSegment = false;
+            //                     break;
+            //                 }
+
+            //                 if(i >= wpt_list.size()){
+            //                     hasSegment = false;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //         if(hasSegment){
+            //             updateWptsSegment(s.hashCode(), i, i+segment.size()-1);
+            //             System.out.println("Actions for users: in segment");
+            //         }
+            //     }
+            // }
             for(Segment s:segmentsThread.keySet()){
                 ArrayList<Waypoint> segment = s.getWpts();
-                for(int i=0; i<wpt_list.size(); i++){
-                    if(wpt_list.get(i).equals(segment.get(0)) && wpt_list.size()>i+segment.size()){
-                        for(int j=0; j<segment.size(); j++){
-                            if(wpt_list.get(i+j).equals(segment.get(j))){
-                                break;
-                            }
-                        }
-                        updateWptsSegment(s.hashCode(), i, i+segment.size());
+                int i=0, j = 0, j_start = 0;
+                // boolean hasSegment = false;
+                boolean checking = false;
+
+                for(j = 0; j<=wpt_list.size() - segment.size(); j++){
+                    if(wpt_list.get(j).equals(segment.get(i))){
+                        System.out.println("Action for users: found first wpt match");
+                        checking = true;
+                        j_start = j;
+                        break;
                     }
                 }
+
+                // while(checking){
+                //     while(segment.get(i).equals(wpt_list.get(j))){
+                //         j++;
+                //         if(segment.size()-i > wpt_list.size()-j){
+                //             // hasSegment = false;
+                //             System.out.println("Hey Hey Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
+                //             checking = false;
+                //             break;
+                //         }
+                //     }
+
+                //     if(checking == false){
+                //         break;
+                //     }
+
+                //     if(segment.get(i+1).equals(wpt_list.get(j))){
+                //         i++;
+                //         if(i==segment.size()-1){
+                //             // hasSegment = true;
+                //             checking = false;
+                //             updateWptsSegment(s.hashCode(), j_start, j);
+                //             //segment
+                //         }
+                //     }
+                //     else{
+                //         // hasSegment = false;
+                //         checking = false;
+                //         System.out.println("Segment Wpt1: \n" + segment.get(i) + "\nSegment Wpt2: \n" + segment.get(i+1) + "\nWpt_list: \n" + wpt_list.get(j));
+
+                //     }
+                // }
+
+
+                // while(checking){
+                //     if(segment.get(i).equals(wpt_list.get(j))){
+                //         if(segment.get(i+1).equals(wpt_list.get(j))){
+                //             i++;
+                //             if(i==segment.size()-1){
+                //                 checking = false;
+                //                 updateWptsSegment(s.hashCode(), j_start, j);
+                //             }
+                //         }
+
+                //         j++;
+                //         if(segment.size()-i > wpt_list.size()-j){
+                //             System.out.println("Hey Hey Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
+                //             checking = false;
+                //             break;
+                //         }
+                //     }
+                //     else{
+                //         System.out.println("Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
+                //         checking = false;
+                //     }
+                // }
+
+                while(true){
+                    if(wpt_list.size() - j <= 1){
+                        break;
+                    }
+
+                    if(segment.size() - i <= 1){
+                        updateWptsSegment(s.hashCode(), j_start, j);
+                        break;
+                    }
+
+                    if(segment.get(i+1).equals(wpt_list.get(j+1))){
+                        i++;
+                        j++;
+                    }
+                    else if(segment.get(i).equals(wpt_list.get(j+1))){
+                        j++;
+                    }
+                    else{
+                        break;
+                    }
+                }
+
             }
         }
     }
@@ -200,34 +330,138 @@ public class ActionsForUsers extends Thread{
         }
     }
 
-    public void run() {
+    public void setRoute(String fileContent){
+        getgpxfile(fileContent);
+        
+        updateCounters();
+
+        checkRouteHasSegment();
+
+        roundRobin(wpt_list, list, index, lock);
+
+        Result result = waitForResult();
+
+        String resultToReturn = result.toString();
+
         try {
-            File f= (File) in.readObject();
-
-            Boolean isRoute = getgpxfile(f);
-
-            if(isRoute){
-
-                updateCounters();
-
-                checkRouteHasSegment();
-
-                roundRobin(wpt_list, list, index, lock);
-
-                Result result = waitForResult();
-
-                out.writeObject(result);
-                out.flush();
-            }
-            else{
-                out.writeObject("Segment set");
-                out.flush();
-            }
-
+            out.writeUTF(resultToReturn);
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public void setSegment(String name, String fileContent){
+        Segment s = new Segment(name, fileContent);
+        synchronized(segmentsLockThread){
+            segmentsThread.put(s, new ArrayList<>());
+        }
+
+        try {
+            out.writeUTF("Segment set");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendStats(String user){
+        double userDistance, userElevation;
+        long userTime;
+
+        synchronized(sumDistanceThreadLock){
+            if(!sumDistanceThread.containsKey(user)){
+                return;
+            }
+            userDistance = sumDistanceThread.get(user);
+        }
+
+        synchronized(sumElevationThreadLock){
+            userElevation = sumElevationThread.get(user);
+        }
+        
+        synchronized(sumTimeThreadLock){
+            userTime = sumTimeThread.get(user);
+        }
+
+        try {
+            out.writeDouble(userDistance);
+            out.writeDouble(userElevation);
+            out.writeLong(userTime);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendLeaderboards(String user){
+        System.out.println("Action for users: in send leaderboards ");
+        ArrayList<Segment> toSend = new ArrayList<>();
+        synchronized(segmentsLockThread){
+            for(Segment s:segmentsThread.keySet()){
+                ArrayList<UserLeaderboard> list = segmentsThread.get(s);
+                for(UserLeaderboard ul:list){
+                    System.out.println("Action for users: leaderboards user check " + ul.getUser() + " " + user);
+                    if(ul.getUser().equals(user)){
+                        toSend.add(s);
+                        break;
+                    }
+                }
+            }
+        }
+
+        try {
+            out.writeInt(toSend.size());
+            for(Segment s:toSend){
+                out.writeUTF(s.getName());
+                ArrayList<UserLeaderboard> list = segmentsThread.get(s);
+                out.writeInt(list.size());
+                for(UserLeaderboard ul:list){
+                    out.writeUTF(ul.getUser());
+                    out.writeLong(ul.getTime());
+                }
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        try {
+
+            String segmentGPX = null, routeGPX = null, username = null, segmentName = null;
+
+            int choice = (int)in.readInt();
+            switch (choice) {
+                case 1:
+                    segmentName = (String)in.readUTF();
+                    segmentGPX = (String)in.readUTF();
+                    setSegment(segmentName, segmentGPX);
+                    break;
+                
+                case 2:
+                    routeGPX = (String)in.readUTF();
+                    setRoute(routeGPX);
+                    break;
+
+                case 3:
+                    username = (String)in.readUTF();
+                    sendLeaderboards(username);
+                    break;
+
+                case 4:
+                    username = (String)in.readUTF();
+                    sendStats(username);
+                    break;
+            
+                default:
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         } finally {

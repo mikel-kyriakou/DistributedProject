@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestClass",
+            "request": "launch",
+            "mainClass": "TestClass",
+            "projectName": "Distributed_Systems_Project_6d732b3c"
+        },
+        {
+            "type": "java",
             "name": "UserForSegment",
             "request": "launch",
             "mainClass": "UserForSegment",

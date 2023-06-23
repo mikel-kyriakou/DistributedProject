@@ -86,7 +86,7 @@ public class Master{
                 providerSocketUser = sUser.accept();
 
                 /* Handle the request */
-                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock, segments, segmentsLock);
+                Thread dUser = new ActionsForUsers(providerSocketUser, workerList, workerIndex, workerListLock, usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, results, resultsLock, segments, segmentsLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock);
                 dUser.start();
 
                 /* Start Reducer thread every time a user opens socket */
