@@ -194,6 +194,7 @@ public class Reducer extends Thread {
         while(running){
             synchronized(usersWaypointsCountersLock){
                 for(String user:usersWaypointsCounters.keySet()){
+                    System.out.println("Reducer: wpt counter = " + usersWaypointsCounters.get(user));
                     if(usersWaypointsCounters.get(user)==1){
                         synchronized(resultsLock){
                             updateResults(user);

@@ -94,7 +94,7 @@ public class ActionsForUsers extends Thread{
 
 
     /* This methos reads gpx file and adds waypoints to a local list */
-    public void getgpxfile(String f){
+    public String getgpxfile(String f){
         try{
             //an instance of factory that gives a document builder  
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -138,11 +138,15 @@ public class ActionsForUsers extends Thread{
                 wpt_list.add(new Waypoint(creator, my_lat, my_lon, my_ele, date));
 
             } 
-            
+
+            return creator;
+
         }
         catch (Exception e){
         e.printStackTrace();
         }  
+            
+        return null;
     }
 
     /* This method updates counters to keep count of routes and waypoints received by each user */
@@ -161,6 +165,7 @@ public class ActionsForUsers extends Thread{
                 waypointsCounters.put(user, wpt_list.size());
             }
             else{
+                System.out.println("Actions for users: wpt counter else");
                 waypointsCounters.put(user, waypointsCounters.get(user)+wpt_list.size());
             }
         }
@@ -168,7 +173,7 @@ public class ActionsForUsers extends Thread{
     }
 
     /* This method waits for result to be added to results list and then returns the result */
-    public Result waitForResult(){
+    public Result waitForResult() {
         while(true){
             synchronized(resultsLock){
                 if(results.get(user)!=null){
@@ -193,120 +198,32 @@ public class ActionsForUsers extends Thread{
             if(segmentsThread.size()==0){
                 return;
             }
-            // for(Segment s:segmentsThread.keySet()){
-            //     ArrayList<Waypoint> segment = s.getWpts();
-            //     for(int i=0; i<wpt_list.size(); i++){
-            //         boolean hasSegment = false;
-            //         if(wpt_list.get(i).equals(segment.get(0)) && wpt_list.size()-i>segment.size()){
-            //             hasSegment = true;
-            //             int j=0;
-            //             i++;
-            //             while(j<segment.size()-1){
-            //                 if(wpt_list.get(i).equals(segment.get(j))){
-            //                     i++;
-            //                 }
-            //                 else if(wpt_list.get(i).equals(segment.get(j+1))){
-            //                     i++;
-            //                     j++;
-            //                 }
-            //                 else{
-            //                     hasSegment = false;
-            //                     break;
-            //                 }
 
-            //                 if(i >= wpt_list.size()){
-            //                     hasSegment = false;
-            //                     break;
-            //                 }
-            //             }
-            //         }
-            //         if(hasSegment){
-            //             updateWptsSegment(s.hashCode(), i, i+segment.size()-1);
-            //             System.out.println("Actions for users: in segment");
-            //         }
-            //     }
-            // }
             for(Segment s:segmentsThread.keySet()){
                 ArrayList<Waypoint> segment = s.getWpts();
                 int i=0, j = 0, j_start = 0;
-                // boolean hasSegment = false;
-                boolean checking = false;
 
                 for(j = 0; j<=wpt_list.size() - segment.size(); j++){
                     if(wpt_list.get(j).equals(segment.get(i))){
                         System.out.println("Action for users: found first wpt match");
-                        checking = true;
                         j_start = j;
                         break;
                     }
                 }
 
-                // while(checking){
-                //     while(segment.get(i).equals(wpt_list.get(j))){
-                //         j++;
-                //         if(segment.size()-i > wpt_list.size()-j){
-                //             // hasSegment = false;
-                //             System.out.println("Hey Hey Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
-                //             checking = false;
-                //             break;
-                //         }
-                //     }
-
-                //     if(checking == false){
-                //         break;
-                //     }
-
-                //     if(segment.get(i+1).equals(wpt_list.get(j))){
-                //         i++;
-                //         if(i==segment.size()-1){
-                //             // hasSegment = true;
-                //             checking = false;
-                //             updateWptsSegment(s.hashCode(), j_start, j);
-                //             //segment
-                //         }
-                //     }
-                //     else{
-                //         // hasSegment = false;
-                //         checking = false;
-                //         System.out.println("Segment Wpt1: \n" + segment.get(i) + "\nSegment Wpt2: \n" + segment.get(i+1) + "\nWpt_list: \n" + wpt_list.get(j));
-
-                //     }
-                // }
-
-
-                // while(checking){
-                //     if(segment.get(i).equals(wpt_list.get(j))){
-                //         if(segment.get(i+1).equals(wpt_list.get(j))){
-                //             i++;
-                //             if(i==segment.size()-1){
-                //                 checking = false;
-                //                 updateWptsSegment(s.hashCode(), j_start, j);
-                //             }
-                //         }
-
-                //         j++;
-                //         if(segment.size()-i > wpt_list.size()-j){
-                //             System.out.println("Hey Hey Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
-                //             checking = false;
-                //             break;
-                //         }
-                //     }
-                //     else{
-                //         System.out.println("Segment Wpt: \n" + segment.get(i) + "\nWpt_list: \n" + wpt_list.get(j));
-                //         checking = false;
-                //     }
-                // }
-
                 while(true){
+                    System.out.println("Action for users: segment while");
                     if(wpt_list.size() - j <= 1){
+                        System.out.println("Action for users: segment break");
                         break;
                     }
 
                     if(segment.size() - i <= 1){
+                        System.out.println("Action for users: found segment");
                         updateWptsSegment(s.hashCode(), j_start, j);
+                        System.out.println("Action for users: segment break");
                         break;
                     }
-
                     if(segment.get(i+1).equals(wpt_list.get(j+1))){
                         i++;
                         j++;
@@ -315,6 +232,7 @@ public class ActionsForUsers extends Thread{
                         j++;
                     }
                     else{
+                        System.out.println("Action for users: segment break");
                         break;
                     }
                 }
@@ -330,27 +248,32 @@ public class ActionsForUsers extends Thread{
         }
     }
 
-    public void setRoute(String fileContent){
-        getgpxfile(fileContent);
+    public String setRoute(String fileContent) throws IOException{
+        System.out.println("Actions for users: getgpx");
+        String user = getgpxfile(fileContent);
         
+        System.out.println("Actions for users: updateCounters");
         updateCounters();
 
+        System.out.println("Actions for users: chech segment");
         checkRouteHasSegment();
 
+        System.out.println("Actions for users: round robin");
         roundRobin(wpt_list, list, index, lock);
 
+        System.out.println("Actions for users: wait for results");
         Result result = waitForResult();
 
         String resultToReturn = result.toString();
 
-        try {
+        try{
             out.writeUTF(resultToReturn);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
+        
+        return user;
     }
 
     public void setSegment(String name, String fileContent){
@@ -389,7 +312,8 @@ public class ActionsForUsers extends Thread{
         try {
             out.writeDouble(userDistance);
             out.writeDouble(userElevation);
-            out.writeLong(userTime);
+            out.writeUTF(millisecondsToString(userTime));
+            // out.writeLong(userTime);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -420,13 +344,23 @@ public class ActionsForUsers extends Thread{
                 out.writeInt(list.size());
                 for(UserLeaderboard ul:list){
                     out.writeUTF(ul.getUser());
-                    out.writeLong(ul.getTime());
+                    out.writeUTF(millisecondsToString(ul.getTime()));
+                    // out.writeLong(ul.getTime());
                 }
             }
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String millisecondsToString(long ms){
+        long totalSeconds = ms/1000;
+        int hours = (int) totalSeconds / 3600;
+        int minutes = (int)(totalSeconds % 3600) / 60;
+        int seconds = (int)totalSeconds % 60;
+
+        return(hours + ":" + minutes + ":" + seconds);
     }
 
     public void run() {
@@ -444,17 +378,13 @@ public class ActionsForUsers extends Thread{
                 
                 case 2:
                     routeGPX = (String)in.readUTF();
-                    setRoute(routeGPX);
-                    break;
-
-                case 3:
-                    username = (String)in.readUTF();
-                    sendLeaderboards(username);
+                    String user = setRoute(routeGPX);
+                    sendStats(user);
                     break;
 
                 case 4:
                     username = (String)in.readUTF();
-                    sendStats(username);
+                    sendLeaderboards(username);
                     break;
             
                 default:

@@ -88,10 +88,10 @@ public class Result implements Serializable{
         df.setRoundingMode(RoundingMode.HALF_UP);
         return "{\n" +
             "User = " + getUser() + "\n" +
-            "Average Distance = " + df.format(getAverageDistance()) + " km\n" +
-            "Average Elevation = " + df.format(getAverageElevation()) + " m\n" +
-            "Average Time = " + df.format(getAverageTime()/1000) + " sec\n" +
-            "Average Speed = " + df.format(getAverageSpeed()) + " km/h\n" +
+            "Route Distance = " + df.format(getAverageDistance()) + " km\n" +
+            "Route Elevation = " + df.format(getAverageElevation()) + " m\n" +
+            "Route Time = " + df.format(getAverageTime()/1000) + " sec\n" +
+            "Route Speed = " + df.format(getAverageSpeed()) + " km/h\n" +
             "}";
     }
 

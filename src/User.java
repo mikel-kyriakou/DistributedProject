@@ -66,7 +66,7 @@ public class User extends Thread{
             in = new ObjectInputStream(requestSocket.getInputStream());
 
             /* Get the gpx file */
-            // user_route = new File("src\\gpxs\\segment2.gpx");
+            // user_route = new File("src\\gpxs\\segment1.gpx");
             // String fileContent = readFile(user_route);
 
             // /* Send the gpx */
@@ -80,34 +80,35 @@ public class User extends Thread{
             // System.out.println(myResult);
 
             /* Get the gpx file */
-            // user_route = new File("src\\gpxs\\route6.gpx");
-            // String fileContent = readFile(user_route);
+            user_route = new File("src\\gpxs\\route4.gpx");
+            String fileContent = readFile(user_route);
 
-            // /* Send the gpx */
-            // out.writeInt(2);
-            // // out.writeUTF("user4");
-            // out.writeUTF(fileContent);
-            // out.flush();
+            /* Send the gpx */
+            out.writeInt(2);
+            // out.writeUTF("user4");
+            out.writeUTF(fileContent);
+            out.flush();
 
-            // /* Print the received result from server */
-            // String myResult = (String)in.readUTF();
-            // System.out.println(myResult);
+            /* Print the received result from server */
+            String myResult = (String)in.readUTF();
+            System.out.println(myResult);
 
             // /* Leaderboard */
-            out.writeInt(3);
-            out.writeUTF("user1");
-            out.flush();
-            int numLeaderboards = (int) in.readInt();
-            for(int i=0; i<numLeaderboards; i++){
-                String name = (String) in.readUTF();
-                System.out.println(name);
-                int numRunners = (int) in.readInt();
-                for(int j=0; j<numRunners; j++){
-                    String runner = (String) in.readUTF();
-                    long time = (long) in.readLong();
-                    System.out.println(runner + " " + time);
-                }
-            }
+            // out.writeInt(3);
+            // out.writeUTF("user1");
+            // out.flush();
+            // int numLeaderboards = (int) in.readInt();
+            // for(int i=0; i<numLeaderboards; i++){
+            //     String name = (String) in.readUTF();
+            //     System.out.println(name);
+            //     int numRunners = (int) in.readInt();
+            //     for(int j=0; j<numRunners; j++){
+            //         String runner = (String) in.readUTF();
+            //         String time = (String) in.readUTF();
+            //         // long time = (long) in.readLong();
+            //         System.out.println(runner + " " + time);
+            //     }
+            // }
 
             // /* Send the gpx */
             // out.writeInt(4);
@@ -115,8 +116,11 @@ public class User extends Thread{
             // out.flush();
 
             // /* Print the received result from server */
-            // String myResult = (String)in.readUTF();
-            // System.out.println(myResult);
+            // double sumDist = (double)in.readDouble();
+            // double sumEle = (double)in.readDouble();
+            // String sumTime = (String)in.readUTF();
+            // // long sumTime = (long)in.readLong();
+            // System.out.println("Total distance: " + sumDist + "\nTotal Elevation: " + sumEle + "\nTotal time: " + sumTime);
 
 
             /* Update file with the results */
