@@ -80,7 +80,7 @@ public class User extends Thread{
             // System.out.println(myResult);
 
             /* Get the gpx file */
-            user_route = new File("src\\gpxs\\route4.gpx");
+            user_route = new File("src\\gpxs\\route3.gpx");
             String fileContent = readFile(user_route);
 
             /* Send the gpx */
@@ -91,7 +91,11 @@ public class User extends Thread{
 
             /* Print the received result from server */
             String myResult = (String)in.readUTF();
+            double dist = (double)in.readDouble();
+            double ele = (double)in.readDouble();
+            String time = (String)in.readUTF();
             System.out.println(myResult);
+            System.out.println("\nTotal distance: " + dist + "\nTotal elevation: " + ele + "\nTotal time: " + time);
 
             // /* Leaderboard */
             // out.writeInt(3);

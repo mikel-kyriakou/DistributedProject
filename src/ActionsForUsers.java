@@ -7,7 +7,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Node;  
 import org.w3c.dom.Element;  
-import java.text.DateFormat; 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date; 
@@ -38,7 +39,6 @@ public class ActionsForUsers extends Thread{
     private Object sumElevationThreadLock = new Object();
     private HashMap<String, Long> sumTimeThread = new HashMap<>();
     private Object sumTimeThreadLock = new Object();
-
 
     public ActionsForUsers(Socket connection, ArrayList<ArrayList<ChunkedGPX>> list, int[] index, Object[] lock, 
                             HashMap<String, Integer> counters, Object routesCountersLock, 
@@ -310,8 +310,8 @@ public class ActionsForUsers extends Thread{
         }
 
         try {
-            out.writeDouble(userDistance);
-            out.writeDouble(userElevation);
+            out.writeDouble(Double.parseDouble(String.format("%.2f", userDistance)));
+            out.writeDouble(Double.parseDouble(String.format("%.2f", userElevation)));
             out.writeUTF(millisecondsToString(userTime));
             // out.writeLong(userTime);
             out.flush();
