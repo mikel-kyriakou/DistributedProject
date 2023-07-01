@@ -54,9 +54,9 @@ public class Reducer extends Thread {
     /* A method that is called to start the reduce phase for the user that we pass as an argument */
     public void updateResults(String user){
         ArrayList<IntermidiateResult> userResults;
-        double sumDist, sumEle;
-        long sumT;
-        int routes;
+        // double sumDist, sumEle;
+        // long sumT;
+        // int routes;
         HashMap<Integer, Long> segmentResults = new HashMap<>();
 
         /* Get the list of intermidiate results for the user */
@@ -110,25 +110,25 @@ public class Reducer extends Thread {
             }
         }
 
-        synchronized(intResultsThreadLock){
-            intResultsThread.put(user, new ArrayList<>());
-        }
+        // synchronized(intResultsThreadLock){
+        //     intResultsThread.put(user, new ArrayList<>());
+        // }
 
-        synchronized(sumDistanceLock){
-            sumDist = sumDistance.get(user);
-        }
+        // synchronized(sumDistanceLock){
+        //     sumDist = sumDistance.get(user);
+        // }
         
-        synchronized(sumElevationLock){
-            sumEle = sumElevation.get(user);
-        }
+        // synchronized(sumElevationLock){
+        //     sumEle = sumElevation.get(user);
+        // }
         
-        synchronized(sumTimeLock){
-            sumT = sumTime.get(user);
-        }
+        // synchronized(sumTimeLock){
+        //     sumT = sumTime.get(user);
+        // }
 
-        synchronized(usersRoutesCountersLock){
-            routes = usersRoutesCounters.get(user);
-        }
+        // synchronized(usersRoutesCountersLock){
+        //     routes = usersRoutesCounters.get(user);
+        // }
 
         /* This creates a result containing the average values of all routes */
         // Result result = new Result(user, sumDist/routes, sumEle/routes, sumT/routes, (sumDist/routes)/(sumT/routes)*3600000);

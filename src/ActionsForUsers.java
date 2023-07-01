@@ -8,7 +8,6 @@ import org.xml.sax.InputSource;
 import org.w3c.dom.Node;  
 import org.w3c.dom.Element;  
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date; 
@@ -359,8 +358,24 @@ public class ActionsForUsers extends Thread{
         int hours = (int) totalSeconds / 3600;
         int minutes = (int)(totalSeconds % 3600) / 60;
         int seconds = (int)totalSeconds % 60;
+        String h = Integer.toString(hours);
+        String m = Integer.toString(minutes);
+        String s = Integer.toString(seconds);
 
-        return(hours + ":" + minutes + ":" + seconds);
+        if(hours<=9){
+            h = "0" + h;
+        }
+
+        if(minutes<=9){
+            m = "0" + m;
+        }
+
+        if(seconds<=9){
+            s = "0" + s;
+        }
+
+
+        return(h + ":" + m + ":" + s);
     }
 
     public void run() {
@@ -371,20 +386,26 @@ public class ActionsForUsers extends Thread{
             int choice = (int)in.readInt();
             switch (choice) {
                 case 1:
+                    System.out.println("Action for users: choice 1");
                     segmentName = (String)in.readUTF();
                     segmentGPX = (String)in.readUTF();
                     setSegment(segmentName, segmentGPX);
+                    System.out.println("Action for users: sent results");
                     break;
                 
                 case 2:
+                    System.out.println("Action for users: choice 2");
                     routeGPX = (String)in.readUTF();
                     String user = setRoute(routeGPX);
                     sendStats(user);
+                    System.out.println("Action for users: sent results");
                     break;
 
                 case 4:
+                    System.out.println("Action for users: choice 4");
                     username = (String)in.readUTF();
                     sendLeaderboards(username);
+                    System.out.println("Action for users: sent results");
                     break;
             
                 default:

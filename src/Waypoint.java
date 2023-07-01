@@ -103,7 +103,7 @@ public class Waypoint implements Serializable{
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = R * c;
 
-        if(d*1000<100){
+        if(d*1000<50){
             return true;
         }
 

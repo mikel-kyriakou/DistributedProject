@@ -86,13 +86,12 @@ public class Result implements Serializable{
     @Override
     public String toString() {
         df.setRoundingMode(RoundingMode.HALF_UP);
-        return "{\n" +
-            "User = " + getUser() + "\n" +
-            "Route Distance = " + df.format(getAverageDistance()) + " km\n" +
-            "Route Elevation = " + df.format(getAverageElevation()) + " m\n" +
-            "Route Time = " + df.format(getAverageTime()/1000) + " sec\n" +
-            "Route Speed = " + df.format(getAverageSpeed()) + " km/h\n" +
-            "}";
+        return
+            "User : " + getUser() + "\n" +
+            "Route Distance : " + df.format(getAverageDistance()) + " km\n" +
+            "Route Elevation : " + df.format(getAverageElevation()) + " m\n" +
+            "Route Time : " + df.format(getAverageTime()/1000) + " sec\n" +
+            "Route Speed : " + df.format(getAverageSpeed()) + " km/h\n";
     }
 
 

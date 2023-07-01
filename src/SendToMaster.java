@@ -15,6 +15,7 @@ public class SendToMaster extends Thread {
     public void run(){
         /* We are constanlty sending the size of the results list 
         and when its over 0, we send an inter result and then remove it from the list. */
+        int counter = 0;
         try {
             while(true){
                 synchronized(lock){
@@ -26,6 +27,9 @@ public class SendToMaster extends Thread {
                         out.writeObject(result);
                         out.flush();
                         list.remove(0);
+                        
+                        counter++;
+                        System.out.println("Send to master: counter " + counter); 
                     }
                     // else{
                     //     out.writeInt(0);

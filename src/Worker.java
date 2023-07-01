@@ -31,7 +31,7 @@ public class Worker {
 
             Thread receiver = new ReceiveFromMaster(in, myWorkerList, lock);
             receiver.start();
-            Thread sender = new SendToMaster(out, resultsList, lock);
+            Thread sender = new SendToMaster(out, resultsList, resultsLock);
             sender.start();
 
         } catch (UnknownHostException unknownHost) {
@@ -43,12 +43,16 @@ public class Worker {
 
     /* This method start a threat for each worker that makes calculation for every inter result we receive. */
     public void calculate(){
+        int counter = 0;
         while(true){
             synchronized(lock){
                 if(myWorkerList.size()>0){
                     Thread t = new WorkerCalculator(myWorkerList.get(0), resultsList, resultsLock);
                     t.start();
                     myWorkerList.remove(0);
+
+                    counter++;
+                    System.out.println("Worker: calculate counter " + counter);
                 }
             }
         }

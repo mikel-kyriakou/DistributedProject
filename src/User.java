@@ -66,7 +66,7 @@ public class User extends Thread{
             in = new ObjectInputStream(requestSocket.getInputStream());
 
             /* Get the gpx file */
-            // user_route = new File("src\\gpxs\\segment1.gpx");
+            // user_route = new File("src\\gpxs\\segment2.gpx");
             // String fileContent = readFile(user_route);
 
             // /* Send the gpx */
@@ -80,7 +80,7 @@ public class User extends Thread{
             // System.out.println(myResult);
 
             /* Get the gpx file */
-            user_route = new File("src\\gpxs\\route3.gpx");
+            user_route = new File("src\\gpxs\\route6.gpx");
             String fileContent = readFile(user_route);
 
             /* Send the gpx */
@@ -98,7 +98,7 @@ public class User extends Thread{
             System.out.println("\nTotal distance: " + dist + "\nTotal elevation: " + ele + "\nTotal time: " + time);
 
             // /* Leaderboard */
-            // out.writeInt(3);
+            // out.writeInt(4);
             // out.writeUTF("user1");
             // out.flush();
             // int numLeaderboards = (int) in.readInt();
