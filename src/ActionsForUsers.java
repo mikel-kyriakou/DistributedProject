@@ -290,29 +290,57 @@ public class ActionsForUsers extends Thread{
     }
 
     public void sendStats(String user){
-        double userDistance, userElevation;
-        long userTime;
+        double userDistance, userElevation, sumDistance = 0, sumElevation = 0;
+        long userTime, sumTime = 0;
+        int totalUsers = 0;
+        double averageDistance, averageElevation, averageTime;
+        int distDifference, eleDifference, timeDifference;
 
         synchronized(sumDistanceThreadLock){
             if(!sumDistanceThread.containsKey(user)){
                 return;
             }
             userDistance = sumDistanceThread.get(user);
+            
+            for(double dist:sumDistanceThread.values()){
+                sumDistance += dist;
+            }
+
+            totalUsers = sumDistanceThread.values().size();
         }
 
         synchronized(sumElevationThreadLock){
             userElevation = sumElevationThread.get(user);
+            
+            for(double ele:sumElevationThread.values()){
+                sumElevation += ele;
+            }
         }
         
         synchronized(sumTimeThreadLock){
             userTime = sumTimeThread.get(user);
+
+            for(long time:sumTimeThread.values()){
+                sumTime += time;
+            }
         }
+
+        averageDistance = sumDistance/totalUsers;
+        averageElevation = sumElevation/totalUsers;
+        averageTime = (double) sumTime/totalUsers;
+
+        distDifference = (int) Math.round(((userDistance - averageDistance) / averageDistance) * 100);
+        eleDifference = (int) Math.round(((userElevation - averageElevation) / averageElevation) * 100);
+        timeDifference = (int) Math.round(((userTime - averageTime) / averageTime) * 100);
+
 
         try {
             out.writeDouble(Double.parseDouble(String.format("%.2f", userDistance)));
             out.writeDouble(Double.parseDouble(String.format("%.2f", userElevation)));
             out.writeUTF(millisecondsToString(userTime));
-            // out.writeLong(userTime);
+            out.writeInt(distDifference);
+            out.writeInt(eleDifference);
+            out.writeInt(timeDifference);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
