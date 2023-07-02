@@ -98,7 +98,7 @@ public class User extends Thread{
             int elePercentage = (int)in.readInt();
             int timePercantage = (int)in.readInt();
             System.out.println(myResult);
-            System.out.println("\nTotal distance: " + dist + "\nTotal elevation: " + ele + "\nTotal time: " + time);
+            System.out.println("Total distance: " + dist + "\nTotal elevation: " + ele + "\nTotal time: " + time);
             System.out.println("\nDistance difference: " + distPercentage + "%\nElevation difference: " + elePercentage + "%\nTime difference: " + timePercantage +"%");
 
             // /* Leaderboard */

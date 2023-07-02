@@ -61,7 +61,7 @@ public class Reducer extends Thread {
 
         /* Get the list of intermidiate results for the user */
         synchronized(intResultsThreadLock){
-            userResults = intResultsThread.get(user);
+            userResults = intResultsThread.remove(user);
         }
 
         for(IntermidiateResult ir:userResults){
