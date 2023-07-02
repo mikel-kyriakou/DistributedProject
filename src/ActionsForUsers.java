@@ -104,14 +104,6 @@ public class ActionsForUsers extends Thread{
             doc.getDocumentElement().normalize();  
             Element x = doc.getDocumentElement();
             String creator = x.getAttribute("creator");
-            /* Determine if it is a segment by the creators name. Segments have creator as "gpxgenerator.com" */
-            // if(creator.equals("gpxgenerator.com")){
-            //     Segment s = new Segment(f);
-            //     synchronized(segmentsLockThread){
-            //         segmentsThread.put(s, new ArrayList<>());
-            //     }
-            //     return false;
-            // }
             this.user = creator;
             NodeList nodeList = doc.getElementsByTagName("wpt");  
             // nodeList is not iterable, so we are using for loop  
@@ -341,8 +333,6 @@ public class ActionsForUsers extends Thread{
 
             out.writeDouble(Double.parseDouble(distanceString));
             out.writeDouble(Double.parseDouble(elevationString));
-           /* out.writeDouble(Double.parseDouble(String.format("%.2f", userDistance)));
-            out.writeDouble(Double.parseDouble(String.format("%.2f", userElevation)));*/
             out.writeUTF(millisecondsToString(userTime));
             out.writeInt(distDifference);
             out.writeInt(eleDifference);
@@ -378,7 +368,6 @@ public class ActionsForUsers extends Thread{
                 for(UserLeaderboard ul:list){
                     out.writeUTF(ul.getUser());
                     out.writeUTF(millisecondsToString(ul.getTime()));
-                    // out.writeLong(ul.getTime());
                 }
             }
             out.flush();

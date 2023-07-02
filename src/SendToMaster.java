@@ -31,10 +31,6 @@ public class SendToMaster extends Thread {
                         counter++;
                         System.out.println("Send to master: counter " + counter); 
                     }
-                    // else{
-                    //     out.writeInt(0);
-                    //     out.flush();
-                    // }
                 }   
             }
         } catch (IOException e) {

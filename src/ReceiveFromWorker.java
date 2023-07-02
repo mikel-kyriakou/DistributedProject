@@ -41,25 +41,15 @@ public class ReceiveFromWorker extends Thread {
     }
 
     public void run(){
-        int counter = 0;
         /* We are constantly reading an int and when its over 0 we read in inter result. */
         try {
             while(true){
-                // int size = (int) in.readInt();
-                // if(size>0){
-                //     IntermidiateResult result = (IntermidiateResult) in.readObject();
-                //     if(result!=null){
-                //         updateIntResults(result);
-                //     }
-                // }
 
                 in.readInt();
                 IntermidiateResult result = (IntermidiateResult) in.readObject();
                 if(result!=null){
                     updateIntResults(result);
                 }
-                // counter++;
-                // System.out.println("Receive from worker: counter " + counter);
             }
 
         } catch (IOException e) {

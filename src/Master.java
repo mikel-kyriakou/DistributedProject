@@ -145,7 +145,7 @@ public class Master{
     }
 
     void startReducer(){
-        Thread reducer = new Reducer(usersRoutesCounters, usersRoutesCountersLock, usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock, intermidateResults, intermidateResultsLock, segments, segmentsLock);
+        Thread reducer = new Reducer(usersWaypointsCounters, usersWaypointsCountersLock, sumDistance, sumDistanceLock, sumElevation, sumElevationLock, sumTime, sumTimeLock, results, resultsLock, intermidateResults, intermidateResultsLock, segments, segmentsLock);
         reducer.start();
     }
 

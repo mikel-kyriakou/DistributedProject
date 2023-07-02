@@ -4,8 +4,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class Reducer extends Thread {
-    private HashMap<String, Integer> usersRoutesCounters = new HashMap<>();
-    private Object usersRoutesCountersLock = new Object();
     private HashMap<String, Integer> usersWaypointsCounters = new HashMap<>();
     private Object usersWaypointsCountersLock = new Object();
     private HashMap<String, Double> sumDistance = new HashMap<>();
@@ -25,16 +23,13 @@ public class Reducer extends Thread {
     private long routeTime = 0;
 
 
-    public Reducer(HashMap<String,Integer> usersRoutesCounters, Object usersRoutesCountersLock, 
-                   HashMap<String,Integer> usersWaypointsCounters, Object usersWaypointsCountersLock, 
+    public Reducer(HashMap<String,Integer> usersWaypointsCounters, Object usersWaypointsCountersLock, 
                    HashMap<String,Double> sumDistance, Object sumDistanceLock, 
                    HashMap<String,Double> sumElevation, Object sumElevationLock, 
                    HashMap<String,Long> sumTime, Object sumTimeLock, 
                    HashMap<String,Result> results, Object resultsLock, 
                    HashMap<String, ArrayList<IntermidiateResult>> intResultsThread, Object intResultsThreadLock, 
                    HashMap<Segment, ArrayList<UserLeaderboard>> segmentsThread, Object segmentsThreadLock){
-        this.usersRoutesCounters = usersRoutesCounters;
-        this.usersRoutesCountersLock = usersRoutesCountersLock;
         this.usersWaypointsCounters = usersWaypointsCounters;
         this.usersWaypointsCountersLock = usersWaypointsCountersLock;
         this.sumDistance = sumDistance;
@@ -54,9 +49,6 @@ public class Reducer extends Thread {
     /* A method that is called to start the reduce phase for the user that we pass as an argument */
     public void updateResults(String user){
         ArrayList<IntermidiateResult> userResults;
-        // double sumDist, sumEle;
-        // long sumT;
-        // int routes;
         HashMap<Integer, Long> segmentResults = new HashMap<>();
 
         /* Get the list of intermidiate results for the user */
@@ -109,29 +101,6 @@ public class Reducer extends Thread {
                 }
             }
         }
-
-        // synchronized(intResultsThreadLock){
-        //     intResultsThread.put(user, new ArrayList<>());
-        // }
-
-        // synchronized(sumDistanceLock){
-        //     sumDist = sumDistance.get(user);
-        // }
-        
-        // synchronized(sumElevationLock){
-        //     sumEle = sumElevation.get(user);
-        // }
-        
-        // synchronized(sumTimeLock){
-        //     sumT = sumTime.get(user);
-        // }
-
-        // synchronized(usersRoutesCountersLock){
-        //     routes = usersRoutesCounters.get(user);
-        // }
-
-        /* This creates a result containing the average values of all routes */
-        // Result result = new Result(user, sumDist/routes, sumEle/routes, sumT/routes, (sumDist/routes)/(sumT/routes)*3600000);
 
         /* This creates a result for the specific route uploaded by user */
         Result result = new Result(user, routeDistance, routeElevation, routeTime, routeDistance/routeTime*3600000);

@@ -19,15 +19,6 @@ public class ReceiveFromMaster extends Thread {
          */
         try { 
             while(true){
-
-                // int size = (int) in.readInt();
-                // if(size>0){
-                //     ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
-                //     synchronized(lock){
-                //         threadList.add(received_chunked);
-                //     }
-                // }
-
                 in.readInt();
                 ChunkedGPX received_chunked = (ChunkedGPX) in.readObject();
                 synchronized(lock){
