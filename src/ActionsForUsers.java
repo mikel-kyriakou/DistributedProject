@@ -335,8 +335,14 @@ public class ActionsForUsers extends Thread{
 
 
         try {
-            out.writeDouble(Double.parseDouble(String.format("%.2f", userDistance)));
-            out.writeDouble(Double.parseDouble(String.format("%.2f", userElevation)));
+
+            String distanceString = String.format("%.2f", userDistance).replace(",", ".");
+            String elevationString = String.format("%.2f", userElevation).replace(",", ".");
+
+            out.writeDouble(Double.parseDouble(distanceString));
+            out.writeDouble(Double.parseDouble(elevationString));
+           /* out.writeDouble(Double.parseDouble(String.format("%.2f", userDistance)));
+            out.writeDouble(Double.parseDouble(String.format("%.2f", userElevation)));*/
             out.writeUTF(millisecondsToString(userTime));
             out.writeInt(distDifference);
             out.writeInt(eleDifference);
